@@ -7,6 +7,7 @@ import com.example.demo.dto.response.UserResponse;
 import com.example.demo.security.JwtUtils;
 import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(@RequestBody LoginRequest request) {
-        String token = userService.login(request);
-        return ResponseEntity.ok(new UserResponse(token));
+        UserResponse response = userService.login(request);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/info")
@@ -41,5 +42,7 @@ public class UserController {
         TokenResponse userInfo = userService.getUserInfo(username);
         return ResponseEntity.ok(userInfo);
     }
+
+//    auth cho OAuth2
 
 }

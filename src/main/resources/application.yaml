@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/app_demo_be
     username: postgres
-    password: 1234
+    password: 123123
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -16,3 +16,19 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+#  cấu hình cho OAuth2 trong việc xác thực bên thứ 3
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: <your-google-client-id>
+            client-secret: <your-google-client-secret>
+            scope: openid,profile,email
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://www.googleapis.com/oauth2/v4/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: email
