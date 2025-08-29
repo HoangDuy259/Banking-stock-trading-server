@@ -3,6 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.RegisterRequest;
 import com.example.demo.dto.response.TokenResponse;
+import com.example.demo.dto.response.UserResponse;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
 import com.example.demo.repository.UserRepository;
@@ -48,15 +49,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String login(LoginRequest request) {
+    public UserResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException.UserNotFound("Email not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new AppException.InvalidPassword("Invalid password");
         }
+//      các token
+        String accessToken = jwtUtils.generateToken(user.getUserName());
+        String refreshToken = jwtUtils.generateRefreshToken(user.getUserName());
+//      các expire
+        long accessTokenTtl = jwtUtils.getAccessTokenExpiration();
+        long refreshTokenTtl = jwtUtils.getRefreshTokenExpiration();
 
-        return jwtUtils.generateToken(user.getUserName());
+        UserResponse response = new UserResponse();
+        response.setAccessToken(accessToken);
+        response.setRefreshToken(refreshToken);
+        response.setExpiresIn(accessTokenTtl);
+        response.setRefreshTokenExpiresIn(refreshTokenTtl);
+
+        return response;
     }
 
     @Override
