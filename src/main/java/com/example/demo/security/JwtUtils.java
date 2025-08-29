@@ -22,6 +22,7 @@ public class JwtUtils {
                 .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
+                .claim("type", "access")  // đánh dấu access token
                 .signWith(key)
                 .compact();
     }
@@ -36,13 +37,16 @@ public class JwtUtils {
         return claims.getSubject();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, String expectedType) {
         try {
-            Jwts.parserBuilder()
+//            giải token
+            Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(token);
-            return true;
+                    .parseClaimsJws(token)
+                    .getBody();
+            String type = claims.get("type", String.class);
+            return expectedType.equals(type);
         } catch (Exception e) {
             return false;
         }
@@ -59,6 +63,7 @@ public class JwtUtils {
                 .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
+                .claim("type", "refresh") // đánh dấu refresh token
                 .signWith(key)
                 .compact();
     }
