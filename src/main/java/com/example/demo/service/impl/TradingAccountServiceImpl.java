@@ -20,15 +20,16 @@ public class TradingAccountServiceImpl implements TradingAccountService {
 
     @Override
     public TradingAccount create(CreateTradingAccountDto request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new ExistsException("User not found"));
-        Optional<TradingAccount> exTradingAccount = tradingAccountRepository.findByUser(user);
-        if (exTradingAccount.isPresent()) {
-            throw new ExistsException("Trading account already exists");
-        }
-        TradingAccount tradingAccount = new TradingAccount();
-        tradingAccount.setUser(user);
-        tradingAccount.setCashBalance(request.getCashBalance());
-        return tradingAccountRepository.save(tradingAccount);
+//        User user = userRepository.findById(request.getUserId())
+//                .orElseThrow(() -> new ExistsException("User not found"));
+//        Optional<TradingAccount> exTradingAccount = tradingAccountRepository.findByUser(user);
+//        if (exTradingAccount.isPresent()) {
+//            throw new ExistsException("Trading account already exists");
+//        }
+//        TradingAccount tradingAccount = new TradingAccount();
+//        tradingAccount.setUser(user);
+//        tradingAccount.setCashBalance(request.getCashBalance());
+//        return tradingAccountRepository.save(tradingAccount);
+        return null;
     }
 }
