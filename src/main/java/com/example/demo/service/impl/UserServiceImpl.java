@@ -1,100 +1,93 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.request.LoginRequest;
-import com.example.demo.dto.request.RegisterRequest;
-import com.example.demo.dto.response.TokenResponse;
-import com.example.demo.dto.response.UserResponse;
+
+import com.example.demo.dto.identity.ClientTokenExchangeParam;
+import com.example.demo.dto.identity.KeycloakProvider;
+import com.example.demo.dto.identity.TokenExchangeResponse;
+import com.example.demo.dto.request.auth.LoginRequest;
+import com.example.demo.dto.request.auth.UserRegisterRequest;
+import com.example.demo.dto.response.keycloak.IdentityClient;
+import com.example.demo.dto.response.user.UserResponse;
 import com.example.demo.entity.User;
-import com.example.demo.exception.AppException;
+import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.security.JwtUtils;
 import com.example.demo.service.UserService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.security.sasl.AuthenticationException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils;
+    UserMapper userMapper;
+    UserRepository userRepository;
+    KeycloakProvider keycloakProvider;
+    IdentityClient identityClient;
+    PasswordEncoder passwordEncoder;
 
-    @Override
-    public String register(RegisterRequest request) {
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new AppException.PasswordMismatch("Passwords do not match");
+    public UserResponse register(UserRegisterRequest userRegisterRequest) {
+        if (userRepository.existsByUsername(userRegisterRequest.getUsername())) {
+            throw new IllegalArgumentException("Username đã tồn tại");
         }
 
-        if (userRepository.findByUserName(request.getUserName()).isPresent()) {
-            throw new AppException.UserAlreadyExists("Username already exists");
+        if (userRepository.existsByEmail(userRegisterRequest.getEmail())) {
+            throw new IllegalArgumentException("Email đã tồn tại");
         }
 
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new AppException.UserAlreadyExists("Email already exists");
-        }
+        log.info("in a method");
 
-        User user = new User();
-        user.setUserName(request.getUserName());
-        user.setEmail(request.getEmail());
-        user.setPhoneNum(request.getPhoneNum());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-
+        User user = userMapper.toUser(userRegisterRequest);
+        log.info("user: " + userRegisterRequest.getUsername());
+        log.info("user: " + user.getUsername());
+        log.info("email: " + user.getEmail());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        log.info("password: " + user.getPassword());
+        user.setEnabled(true);
+        log.info("register successed: " + userRepository.count());
         userRepository.save(user);
-        return "User registered successfully!";
+
+        return userMapper.toUserResponse(user);
     }
 
-    @Override
-    public UserResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new AppException.UserNotFound("Email not found"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new AppException.InvalidPassword("Invalid password");
+    public TokenExchangeResponse login(LoginRequest loginRequest) throws AuthenticationException {
+        User user = userRepository.findUserByUsername(loginRequest.getUsername());
+
+        // Kiểm tra nếu user không tồn tại
+        if (user == null) {
+            throw new AuthenticationException("Sai tên đăng nhập hoặc mật khẩu.");
         }
-//      các token
-        String accessToken = jwtUtils.generateToken(user.getUserName());
-        String refreshToken = jwtUtils.generateRefreshToken(user.getUserName());
-//      các expire
-        long accessTokenTtl = jwtUtils.getAccessTokenExpiration();
-        long refreshTokenTtl = jwtUtils.getRefreshTokenExpiration();
 
-        UserResponse response = new UserResponse();
-        response.setAccessToken(accessToken);
-        response.setRefreshToken(refreshToken);
-        response.setExpiresIn(accessTokenTtl);
-        response.setRefreshTokenExpiresIn(refreshTokenTtl);
+        // Kiểm tra nếu tài khoản bị vô hiệu hóa
+        if (!user.getEnabled()) {
+            throw new DisabledException("Tài khoản chưa được kích hoạt.");
+        }
 
-        return response;
+        // Gửi request đến Keycloak để lấy token
+        return identityClient.exchangeTokenClient(ClientTokenExchangeParam.builder()
+                .grant_type("password")
+                .client_id(keycloakProvider.getClientID())
+                .client_secret(keycloakProvider.getClientSecret())
+                .username(loginRequest.getUsername())
+                .password(loginRequest.getPassword())
+                .scope("openid")
+                .build());
     }
 
-    @Override
-    public TokenResponse getUserInfo(String username) {
-        User user = userRepository.findByUserName(username)
-                .orElseThrow(() -> new AppException.UserNotFound("User not found"));
 
-        TokenResponse response = new TokenResponse();
-        response.setId(user.getId());
-        response.setEmail(user.getEmail());
-        response.setPhoneNum(user.getPhoneNum());
-
-        return response;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUserName(username)
-                .orElseThrow(() -> new AppException.UserNotFound("User not found"));
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getUserName(),
-                user.getPassword(),
-                new ArrayList<>()
-        );
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(userMapper::toUserResponse).collect(Collectors.toList());
     }
 
 }

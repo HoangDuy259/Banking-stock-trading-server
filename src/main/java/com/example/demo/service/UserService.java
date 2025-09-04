@@ -1,13 +1,14 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.LoginRequest;
-import com.example.demo.dto.request.RegisterRequest;
-import com.example.demo.dto.response.TokenResponse;
-import com.example.demo.dto.response.UserResponse;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserService extends UserDetailsService {
-    String register(RegisterRequest request);
-    UserResponse login(LoginRequest request);
-    TokenResponse getUserInfo(String username);
+import com.example.demo.dto.identity.TokenExchangeResponse;
+import com.example.demo.dto.request.auth.LoginRequest;
+import com.example.demo.dto.request.auth.UserRegisterRequest;
+import com.example.demo.dto.response.user.UserResponse;
+
+import javax.security.sasl.AuthenticationException;
+
+public interface UserService  {
+    UserResponse register(UserRegisterRequest userRegisterRequest);
+    TokenExchangeResponse login(LoginRequest loginRequest) throws AuthenticationException;
 }

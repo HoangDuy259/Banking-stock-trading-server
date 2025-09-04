@@ -1,63 +1,36 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-@Data
+@AllArgsConstructor
 @NoArgsConstructor
-public class User {
+@Setter
+@Getter
+public class User extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id" , nullable = false, columnDefinition = "uuid", updatable = false)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "user_name", nullable = false, columnDefinition = "varchar(50)")
-    private String userName;
+    @Column(name = "firstname", nullable = false, length = 50)
+    private String firstName;
 
-    @Column(name = "email", nullable = false, columnDefinition = "varchar(100)")
+    @Column(name = "lastname", nullable = false, length = 50)
+    private String lastName;
+
+    @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(name = "phone_Num", nullable = false, columnDefinition = "varchar(20)")
-    private String phoneNum;
+    @Column(name = "username", nullable = false, unique = true, length = 50)
+    private String username;
 
-    @Column(name = "password", nullable = false, columnDefinition = "varchar(255)")
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    public String getUserName() {
-        return userName;
-    }
+    private Boolean enabled;
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhoneNum() {
-        return phoneNum;
-    }
-
-    public void setPhoneNum(String phoneNum) {
-        this.phoneNum = phoneNum;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
