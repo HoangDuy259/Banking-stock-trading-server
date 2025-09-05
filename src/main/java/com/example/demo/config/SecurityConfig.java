@@ -28,8 +28,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/api/stock/**", "/api/trading/**", "/api/order").authenticated()
+                        .requestMatchers("/auth/**", "/api/password/**").permitAll()
+                        .requestMatchers("/api/stock/**", "/api/trading/**", "/api/order/**", "/api/roles/**").authenticated()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults())

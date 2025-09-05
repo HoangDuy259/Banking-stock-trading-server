@@ -1,10 +1,10 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -14,11 +14,11 @@ import java.util.UUID;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id" , nullable = false, columnDefinition = "uuid", updatable = false)
-    private UUID id;
+    @Column(name = "user_id" , nullable = false, columnDefinition = "uuid", updatable = false)
+    private UUID userId;
 
-    @Column(name = "user_name", nullable = false, columnDefinition = "varchar(50)")
-    private String userName;
+    @Column(name = "username", nullable = false, columnDefinition = "varchar(50)")
+    private String username;
 
     @Column(name = "email", nullable = false, columnDefinition = "varchar(100)")
     private String email;
@@ -29,35 +29,11 @@ public class User {
     @Column(name = "password", nullable = false, columnDefinition = "varchar(255)")
     private String password;
 
-    public String getUserName() {
-        return userName;
-    }
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP")
+    private OffsetDateTime createdAt;
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+    @Column(name = "last_login", columnDefinition = "TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP")
+    private OffsetDateTime lastLogin;
 
-    public String getEmail() {
-        return email;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhoneNum() {
-        return phoneNum;
-    }
-
-    public void setPhoneNum(String phoneNum) {
-        this.phoneNum = phoneNum;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

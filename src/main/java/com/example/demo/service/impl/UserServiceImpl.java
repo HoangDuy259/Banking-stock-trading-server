@@ -2,8 +2,11 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.RegisterRequest;
+import com.example.demo.dto.request.roles.RoleRequest;
+import com.example.demo.dto.request.users.UserRequest;
 import com.example.demo.dto.response.TokenResponse;
 import com.example.demo.dto.response.UserResponse;
+import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
 import com.example.demo.repository.UserRepository;
@@ -15,7 +18,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +35,7 @@ public class UserServiceImpl implements UserService {
             throw new AppException.PasswordMismatch("Passwords do not match");
         }
 
-        if (userRepository.findByUserName(request.getUserName()).isPresent()) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new AppException.UserAlreadyExists("Username already exists");
         }
 
@@ -39,10 +44,11 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.setUserName(request.getUserName());
+        user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPhoneNum(request.getPhoneNum());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setCreatedAt(OffsetDateTime.now());
 
         userRepository.save(user);
         return "User registered successfully!";
@@ -57,8 +63,8 @@ public class UserServiceImpl implements UserService {
             throw new AppException.InvalidPassword("Invalid password");
         }
 //      các token
-        String accessToken = jwtUtils.generateToken(user.getUserName());
-        String refreshToken = jwtUtils.generateRefreshToken(user.getUserName());
+        String accessToken = jwtUtils.generateToken(user.getUsername());
+        String refreshToken = jwtUtils.generateRefreshToken(user.getUsername());
 //      các expire
         long accessTokenTtl = jwtUtils.getAccessTokenExpiration();
         long refreshTokenTtl = jwtUtils.getRefreshTokenExpiration();
@@ -74,11 +80,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public TokenResponse getUserInfo(String username) {
-        User user = userRepository.findByUserName(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException.UserNotFound("User not found"));
 
         TokenResponse response = new TokenResponse();
-        response.setId(user.getId());
+        response.setId(user.getUserId());
         response.setEmail(user.getEmail());
         response.setPhoneNum(user.getPhoneNum());
 
@@ -87,14 +93,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUserName(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException.UserNotFound("User not found"));
 
         return new org.springframework.security.core.userdetails.User(
-                user.getUserName(),
+                user.getUsername(),
                 user.getPassword(),
                 new ArrayList<>()
         );
     }
+
+//    Code mới của Duong
+    @Override
+    public User updateUser(UUID id, UserRequest user) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
+        existingUser.setUsername(user.getUsername());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setPhoneNum(user.getPhoneNum());
+        return userRepository.save(existingUser);
+    }
+
+
 
 }

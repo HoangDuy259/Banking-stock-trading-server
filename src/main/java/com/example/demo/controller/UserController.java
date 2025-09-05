@@ -3,17 +3,24 @@ package com.example.demo.controller;
 import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.RefreshTokenRequest;
 import com.example.demo.dto.request.RegisterRequest;
+import com.example.demo.dto.request.roles.RoleRequest;
+import com.example.demo.dto.request.users.UserRequest;
 import com.example.demo.dto.response.RefreshTokenResponse;
 import com.example.demo.dto.response.TokenResponse;
 import com.example.demo.dto.response.UserResponse;
+import com.example.demo.entity.Role;
+import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
 import com.example.demo.security.JwtUtils;
 import com.example.demo.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth/users")
@@ -76,5 +83,13 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody UserRequest user) {
+        User updatedUser = userService.updateUser(id, user);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+
 
 }

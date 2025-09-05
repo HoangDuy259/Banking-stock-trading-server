@@ -21,7 +21,7 @@ public class MatchingHistory {
     @Column(name = "match_id", columnDefinition = "uuid", updatable = false)
     private UUID matchId;
 
-    //gia khop lenh
+    // gia khop lenh
     @Column(name = "match_price",nullable = false)
     private BigDecimal matchPrice;
 

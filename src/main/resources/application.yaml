@@ -16,19 +16,26 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
-#  cấu hình cho OAuth2 trong việc xác thực bên thứ 3
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: <your-google-client-id>
-            client-secret: <your-google-client-secret>
-            scope: openid,profile,email
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-            token-uri: https://www.googleapis.com/oauth2/v4/token
-            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-            user-name-attribute: email
+#  cấu hình mail gửi otp
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: huynhnhutduong7112003@gmail.com # gmail của sender
+    password: mval orll zkxu ewim # quản lý tk gg -> xác thực 2 lớp -> app password -> create -> copy + paste pass
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+  # cấu hình redis
+  redis:
+    host: localhost
+    port: 6379
+    password: 123456
+    timeout: 6000ms
+    connect-timeout: 6000ms
+  data:
+    redis:
+      client-type: jedis
