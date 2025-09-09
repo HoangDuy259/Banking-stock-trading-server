@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    context-path: /super-app
+    context-path: /superApp
 
 
 spring:
@@ -26,7 +26,7 @@ spring:
 idp:
   url: http://localhost:9091
   client-id: superapp
-  client-secret: cXLWfsm5vphbRMx5w9PuAGD8fXKasZdX
+  client-secret: 4ya7QMc8Y5zW54x5J8Pxk4FXWvyIee99
 keycloak:
   realm: SuperApp
   admin-username: admin
