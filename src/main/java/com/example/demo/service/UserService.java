@@ -7,8 +7,16 @@ import com.example.demo.dto.request.auth.UserRegisterRequest;
 import com.example.demo.dto.response.user.UserResponse;
 
 import javax.security.sasl.AuthenticationException;
+import java.util.List;
 
 public interface UserService  {
     UserResponse register(UserRegisterRequest userRegisterRequest);
     TokenExchangeResponse login(LoginRequest loginRequest) throws AuthenticationException;
+    UserResponse getMyInfo();
+    List<UserResponse> getAllUsers();
+    UserResponse updateUser();
+//    UserResponse updateUser(UpdateUserRequest request);
+    Boolean deleteUser(Long userId);
+//    Boolean resetPassword(ResetPasswordRequest newPassword);
+    boolean isUserEnabled(String username);
 }

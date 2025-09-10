@@ -1,10 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.CreateTradingAccountDto;
-import com.example.demo.dto.request.stocks.CreateStockRequest;
-import com.example.demo.entity.Stock;
-import com.example.demo.entity.TradingAccount;
-import com.example.demo.service.TradingAccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

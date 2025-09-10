@@ -1,4 +1,4 @@
-package com.example.demo.dto.response.keycloak;
+package com.example.demo.dto;
 
 
 import com.example.demo.dto.identity.ClientTokenExchangeParam;
