@@ -1,8 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.stocks.CreateStockRequest;
-import com.example.demo.entity.Stock;
-import com.example.demo.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
