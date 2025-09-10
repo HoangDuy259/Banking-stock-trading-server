@@ -1,10 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.stocks.TradingOrderRequestDto;
-import com.example.demo.dto.request.stocks.OrderRequestDto;
-import com.example.demo.dto.response.OrderResponseDto;
-import com.example.demo.entity.Order;
-import com.example.demo.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
