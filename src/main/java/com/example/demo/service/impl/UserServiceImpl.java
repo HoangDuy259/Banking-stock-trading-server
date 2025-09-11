@@ -39,52 +39,52 @@ public class UserServiceImpl implements UserService {
     IdentityClient identityClient;
     PasswordEncoder passwordEncoder;
 
-    public UserResponse register(UserRegisterRequest userRegisterRequest) {
-        if (userRepository.existsByUsername(userRegisterRequest.getUsername())) {
-            throw new IllegalArgumentException("Username đã tồn tại");
-        }
+//    public UserResponse register(UserRegisterRequest userRegisterRequest) {
+//        if (userRepository.existsByUsername(userRegisterRequest.getUsername())) {
+//            throw new IllegalArgumentException("Username đã tồn tại");
+//        }
+//
+//        if (userRepository.existsByEmail(userRegisterRequest.getEmail())) {
+//            throw new IllegalArgumentException("Email đã tồn tại");
+//        }
+//
+//        log.info("in a method");
+//
+//        User user = userMapper.toUser(userRegisterRequest);
+//        log.info("user: " + userRegisterRequest.getUsername());
+//        log.info("user: " + user.getUsername());
+//        log.info("email: " + user.getEmail());
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        log.info("password: " + user.getPassword());
+//        user.setEnabled(true);
+//        log.info("register successed: " + userRepository.count());
+//        userRepository.save(user);
+//
+//        return userMapper.toUserResponse(user);
+//    }
 
-        if (userRepository.existsByEmail(userRegisterRequest.getEmail())) {
-            throw new IllegalArgumentException("Email đã tồn tại");
-        }
 
-        log.info("in a method");
-
-        User user = userMapper.toUser(userRegisterRequest);
-        log.info("user: " + userRegisterRequest.getUsername());
-        log.info("user: " + user.getUsername());
-        log.info("email: " + user.getEmail());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        log.info("password: " + user.getPassword());
-        user.setEnabled(true);
-        log.info("register successed: " + userRepository.count());
-        userRepository.save(user);
-
-        return userMapper.toUserResponse(user);
-    }
-
-
-    public TokenExchangeResponse login(LoginRequest loginRequest) throws AuthenticationException {
-        User user = userRepository.findUserByEmail(loginRequest.getEmail()).orElseThrow( () ->
-                 new AuthenticationException("User not found")
-        );
-        log.info("user: "+ user.getUsername());
-
-        // Kiểm tra nếu tài khoản bị vô hiệu hóa
-        if (!user.getEnabled()) {
-            throw new DisabledException("Tài khoản chưa được kích hoạt.");
-        }
-
-        // Gửi request đến Keycloak để lấy token
-        return identityClient.exchangeTokenClient(ClientTokenExchangeParam.builder()
-                .grant_type("password")
-                .client_id(keycloakProvider.getClientID())
-                .client_secret(keycloakProvider.getClientSecret())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .scope("openid")
-                .build());
-    }
+//    public TokenExchangeResponse login(LoginRequest loginRequest) throws AuthenticationException {
+//        User user = userRepository.findUserByEmail(loginRequest.getEmail()).orElseThrow( () ->
+//                 new AuthenticationException("User not found")
+//        );
+//        log.info("user: "+ user.getUsername());
+//
+//        // Kiểm tra nếu tài khoản bị vô hiệu hóa
+//        if (!user.getEnabled()) {
+//            throw new DisabledException("Tài khoản chưa được kích hoạt.");
+//        }
+//
+//        // Gửi request đến Keycloak để lấy token
+//        return identityClient.exchangeTokenClient(ClientTokenExchangeParam.builder()
+//                .grant_type("password")
+//                .client_id(keycloakProvider.getClientID())
+//                .client_secret(keycloakProvider.getClientSecret())
+//                .username(user.getUsername())
+//                .password(user.getPassword())
+//                .scope("openid")
+//                .build());
+//    }
 
     @Override
     public UserResponse getMyInfo() {
@@ -130,5 +130,7 @@ public class UserServiceImpl implements UserService {
         }
         return username;
     }
+
+//    Duong code
 
 }
