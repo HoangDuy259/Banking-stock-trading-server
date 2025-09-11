@@ -7,6 +7,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,6 +31,16 @@ public class TradingAccountService implements ITradingAccountService {
         return null;
     }
 
-
+    public String getAuthenticationUsername(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = null;
+        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
+            Jwt jwt = jwtAuth.getToken();
+            String sub = jwt.getSubject(); // tương đương getClaim("sub")
+            username = jwt.getClaimAsString("preferred_username");
+            System.out.println("username = " + username);
+        }
+        return username;
+    }
 
 }
