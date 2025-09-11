@@ -21,11 +21,11 @@ public class PortfolioHolding {
     UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "portfolio_id ", nullable = false)
+    @JoinColumn(name = "portfolio_id ", nullable = false)
     Portfolio portfolio;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @Column(name = "stock_id", nullable = false)
+    @JoinColumn(name = "stock_id", nullable = false)
     Stock stock;
 
     @Column(name="quantity", nullable = false)

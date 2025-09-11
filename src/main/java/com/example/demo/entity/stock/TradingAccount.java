@@ -25,11 +25,11 @@ public class TradingAccount extends BaseEntity {
     UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @Column(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @Column(name = "bank_account_id", nullable = true)
+    @JoinColumn(name = "bank_account_id", nullable = true)
     BankAccount bankAccount;
 
     @Column(name = "account_number", nullable = false, unique = true, length = 50)

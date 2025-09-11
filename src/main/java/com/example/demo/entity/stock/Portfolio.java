@@ -23,7 +23,7 @@ public class Portfolio extends BaseEntity {
     UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "user_id ", nullable = false)
+    @JoinColumn(name = "user_id ", nullable = false)
     User user;
 
     @Column(name = "porfolio_name", nullable = false, unique = true)

@@ -23,11 +23,11 @@ public class Order extends BaseEntity {
     UUID orderId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @Column(name = "trading_account_id", nullable = false)
+    @JoinColumn(name = "trading_account_id", nullable = false)
     TradingAccount account;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @Column(name = "stock_id", nullable = true)
+    @JoinColumn(name = "stock_id", nullable = false)
     Stock stock;
 
     @Column(name = "order_type", nullable = false, unique = true, length = 50)
