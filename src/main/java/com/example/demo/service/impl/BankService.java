@@ -1,8 +1,9 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.entity.bank.BankAccount;
 import com.example.demo.repository.BankRepository;
 import com.example.demo.repository.interfaces.IBaseRepository;
+import com.example.demo.service.BaseService;
 
 import java.util.UUID;
 

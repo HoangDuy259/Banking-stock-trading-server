@@ -1,11 +1,7 @@
 package com.example.demo.service.impl;
 
 
-import com.example.demo.dto.identity.ClientTokenExchangeParam;
 import com.example.demo.dto.identity.KeycloakProvider;
-import com.example.demo.dto.identity.TokenExchangeResponse;
-import com.example.demo.dto.request.auth.LoginRequest;
-import com.example.demo.dto.request.auth.UserRegisterRequest;
 import com.example.demo.dto.IdentityClient;
 import com.example.demo.dto.response.user.UserResponse;
 import com.example.demo.entity.User;
@@ -16,7 +12,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +19,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import javax.security.sasl.AuthenticationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
