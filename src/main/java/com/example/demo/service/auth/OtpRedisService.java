@@ -1,4 +1,4 @@
-package com.example.demo.service.impl;
+package com.example.demo.service.auth;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;

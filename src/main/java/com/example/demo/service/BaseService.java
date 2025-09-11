@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.repository.interfaces.IBaseRepository;
+import com.example.demo.repository.BaseRepository;
 import com.example.demo.service.interfaces.IBaseService;
 import jakarta.transaction.Transactional;
 
@@ -9,7 +9,7 @@ import java.util.List;
 @Transactional
 public abstract class BaseService<T, ID> implements IBaseService<T, ID> {
 
-    protected abstract IBaseRepository<T, ID> getRepository();
+    protected abstract BaseRepository<T, ID> getRepository();
 
     @Override
     public T save(T entity) {

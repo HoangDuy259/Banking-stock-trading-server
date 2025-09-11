@@ -1,4 +1,4 @@
-package com.example.demo.service.impl;
+package com.example.demo.service.auth;
 
 import com.example.demo.dto.IdentityClient;
 import com.example.demo.dto.identity.ClientTokenExchangeParam;
@@ -10,7 +10,6 @@ import com.example.demo.dto.response.user.UserResponse;
 import com.example.demo.entity.User;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,17 +19,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.security.sasl.AuthenticationException;
+import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AuthService {
+public class AuthService implements IAuthService{
     UserMapper userMapper;
     UserRepository userRepository;
     KeycloakProvider keycloakProvider;
     IdentityClient identityClient;
     PasswordEncoder passwordEncoder;
+//    dùng cho reset password
+    private final OtpRedisService otpRedisService;
+    private final EmailService emailService;
+
+//    đăng ký
     public UserResponse register(UserRegisterRequest userRegisterRequest) {
         if (userRepository.existsByUsername(userRegisterRequest.getUsername())) {
             throw new IllegalArgumentException("Username đã tồn tại");
@@ -55,6 +61,7 @@ public class AuthService {
         return userMapper.toUserResponse(user);
     }
 
+//    đăng nhập
     public TokenExchangeResponse login(LoginRequest loginRequest) throws AuthenticationException {
         User user = userRepository.findUserByEmail(loginRequest.getEmail()).orElseThrow( () ->
                 new AuthenticationException("User not found")
@@ -75,5 +82,36 @@ public class AuthService {
                 .password(user.getPassword())
                 .scope("openid")
                 .build());
+    }
+
+//    reset password
+public void sendOtp(String email) {
+    User user = userRepository.findUserByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+
+    String otp = String.format("%06d", new Random().nextInt(999999));
+
+    // lưu OTP vào Redis 5 phút
+    otpRedisService.saveOtp(user.getEmail(), otp, 5);
+
+    // gửi otp
+    emailService.sendOtpEmail(user.getEmail(), otp);
+}
+
+    public boolean resetPassword(String email, String otp, String newPassword) {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+
+        String cachedOtp = otpRedisService.getOtp(email);
+
+        if (cachedOtp == null || !cachedOtp.equals(otp)) {
+            return false; // OTP sai hoặc đã hết hạn
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        otpRedisService.deleteOtp(email);
+        return true;
     }
 }

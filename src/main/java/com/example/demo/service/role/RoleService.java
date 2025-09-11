@@ -1,12 +1,9 @@
-package com.example.demo.service.impl;
+package com.example.demo.service.role;
 
 import com.example.demo.dto.request.roles.RoleRequest;
 import com.example.demo.entity.Role;
 import com.example.demo.repository.RoleRepository;
-import com.example.demo.service.IRoleService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 

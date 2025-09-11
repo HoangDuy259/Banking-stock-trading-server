@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.role;
 
 import com.example.demo.dto.request.roles.RoleRequest;
 import com.example.demo.entity.Role;
