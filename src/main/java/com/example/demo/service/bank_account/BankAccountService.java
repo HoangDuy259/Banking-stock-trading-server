@@ -4,13 +4,13 @@ import com.example.demo.dto.request.bank.BankAccountRequest;
 import com.example.demo.dto.response.bank.BankAccountResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.bank.BankAccount;
-import com.example.demo.mapper.BankAccountMapper;
+//import com.example.demo.mapper.BankAccountMapper;
 import com.example.demo.repository.BankAccountRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.BaseRepository;
 import com.example.demo.service.BaseService;
 import com.example.demo.utils.bank.BankAccountUtils;
-import com.example.demo.utils.enums.BankAccountStatus;
+import com.example.demo.utils.enums.AccountStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class BankAccountService extends BaseService<BankAccount, UUID> implement
     BankAccountRepository bankAccountRepository;
     UserRepository userRepository;
     BankAccountUtils bankAccountUtils;
-    BankAccountMapper bankAccountMapper;
+//    BankAccountMapper bankAccountMapper;
 
     @Override
     protected BaseRepository<BankAccount, UUID> getRepository() {
@@ -41,11 +41,10 @@ public class BankAccountService extends BaseService<BankAccount, UUID> implement
         String accountNumber = bankAccountUtils.generateAccountNumber();
 
         BankAccount account = new BankAccount();
-        bankAccountMapper.toBankAccount(dto);
-//        account.setUser(user);
-//        account.setAccountNumber(accountNumber);
-//        account.setBalance(BigDecimal.ZERO);
-//        account.setStatus(BankAccountStatus.ACTIVE);
+        account.setUser(user);
+        account.setAccountNumber(accountNumber);
+        account.setBalance(BigDecimal.ZERO);
+        account.setStatus(AccountStatus.ACTIVE);
         return save(account);
     }
 
@@ -58,23 +57,33 @@ public class BankAccountService extends BaseService<BankAccount, UUID> implement
                 .toList();
     }
 
-    @Override
-    public BankAccountResponse getById(UUID id) {
-        BankAccount account = bankAccountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bank account không tồn tại"));
-        return toResponse(account);
-    }
+//    @Override
+//    public BankAccountResponse getById(UUID id) {
+//        BankAccount account = bankAccountRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Bank account không tồn tại"));
+//        return toResponse(account);
+//    }
 
-    @Override
-    public BankAccountResponse updateStatus(UUID id, BankAccountStatus status) {
-        BankAccountResponse account = getById(id);
-        account.setStatus(status);
-        return bankAccountRepository.save(toResponse((account)));
-    }
+//    @Override
+//    public BankAccountResponse updateStatus(UUID id, AccountStatus status) {
+//        BankAccountResponse account = getById(id);
+//        account.setStatus(status);
+//        return bankAccountRepository.save(toResponse((account)));
+//    }
 
-    @Override
-    public void deleteAccount(UUID id) {
-        bankAccountRepository.deleteById(id);
+//    @Override
+//    public void deleteAccount(UUID id) {
+//        bankAccountRepository.deleteById(id);
+//    }
+
+    private BankAccountResponse toResponse(BankAccount account) {
+        BankAccountResponse res = new BankAccountResponse();
+        res.setId(account.getId());
+        res.setAccountNumber(account.getAccountNumber());
+        res.setBalance(account.getBalance());
+        res.setStatus(account.getStatus());
+        res.setUserId(account.getUser().getId());
+        return res;
     }
 
 }

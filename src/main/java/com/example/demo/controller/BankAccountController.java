@@ -4,7 +4,7 @@ import com.example.demo.dto.request.bank.BankAccountRequest;
 import com.example.demo.dto.response.bank.BankAccountResponse;
 import com.example.demo.entity.bank.BankAccount;
 import com.example.demo.service.bank_account.IBankAccountService;
-import com.example.demo.utils.enums.BankAccountStatus;
+import com.example.demo.utils.enums.AccountStatus;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,23 +36,23 @@ public class BankAccountController {
     }
 
     // lấy chi tiết 1 account
-    @GetMapping("/{id}")
-    public ResponseEntity<BankAccountResponse> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(bankAccountService.getById(id));
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<BankAccountResponse> getById(@PathVariable UUID id) {
+//        return ResponseEntity.ok(bankAccountService.getById(id));
+//    }
 
     // cập nhật trạng thái account (VD: OPEN -> CLOSED)
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<BankAccount> updateStatus(@PathVariable UUID id,
-                                                    @RequestParam BankAccountStatus status) {
-        return ResponseEntity.ok(bankAccountService.updateStatus(id, status));
-    }
+//    @PatchMapping("/{id}/status")
+//    public ResponseEntity<BankAccount> updateStatus(@PathVariable UUID id,
+//                                                    @RequestParam AccountStatus status) {
+//        return ResponseEntity.ok(bankAccountService.updateStatus(id, status));
+//    }
 
     // xoá account
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable UUID id) {
-        bankAccountService.deleteAccount(id);
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Void> deleteAccount(@PathVariable UUID id) {
+//        bankAccountService.deleteAccount(id);
+//        return ResponseEntity.noContent().build();
+//    }
 }
 

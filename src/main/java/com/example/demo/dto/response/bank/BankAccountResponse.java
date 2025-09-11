@@ -1,6 +1,6 @@
 package com.example.demo.dto.response.bank;
 
-import com.example.demo.utils.enums.BankAccountStatus;
+import com.example.demo.utils.enums.AccountStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -11,6 +11,6 @@ public class BankAccountResponse {
     UUID id;
     String accountNumber;
     BigDecimal balance;
-    BankAccountStatus status;
+    AccountStatus status;
     Long userId;
 }
