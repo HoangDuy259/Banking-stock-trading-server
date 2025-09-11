@@ -5,7 +5,7 @@ import com.example.demo.dto.request.auth.LoginRequest;
 import com.example.demo.dto.request.auth.UserRegisterRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.user.UserResponse;
-import com.example.demo.service.AuthService;
+import com.example.demo.service.auth.AuthService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

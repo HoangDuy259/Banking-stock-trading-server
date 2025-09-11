@@ -1,8 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.bank.BankAccountRequest;
+import com.example.demo.dto.response.bank.BankAccountResponse;
 import com.example.demo.entity.bank.BankAccount;
-import com.example.demo.service.BankAccountService;
+import com.example.demo.service.bank_account.IBankAccountService;
 import com.example.demo.utils.enums.BankAccountStatus;
 import lombok.*;
 import org.springframework.http.HttpStatus;
@@ -15,11 +16,11 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/bank-accounts")
+@RequestMapping("/bank-accounts")
 @RequiredArgsConstructor
 public class BankAccountController {
 
-    private final BankAccountService bankAccountService;
+    private final IBankAccountService bankAccountService;
 
     // tạo account mới cho 1 user
     @PostMapping
@@ -30,13 +31,13 @@ public class BankAccountController {
 
     // lấy tất cả account của 1 user
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<BankAccount>> getAccountsByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<BankAccountResponse>> getAccountsByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(bankAccountService.getAccountsByUser(userId));
     }
 
     // lấy chi tiết 1 account
     @GetMapping("/{id}")
-    public ResponseEntity<BankAccount> getById(@PathVariable UUID id) {
+    public ResponseEntity<BankAccountResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(bankAccountService.getById(id));
     }
 

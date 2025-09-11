@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.auth;
 
 import com.example.demo.dto.IdentityClient;
 import com.example.demo.dto.identity.ClientTokenExchangeParam;
@@ -11,7 +11,6 @@ import com.example.demo.entity.User;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.UserRepository;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +20,13 @@ import org.springframework.stereotype.Service;
 
 import javax.security.sasl.AuthenticationException;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AuthService {
+public class AuthService implements IAuthService{
     UserMapper userMapper;
     UserRepository userRepository;
     KeycloakProvider keycloakProvider;
