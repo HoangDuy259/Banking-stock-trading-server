@@ -23,10 +23,33 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:9091/realms/SuperApp
+  #  cấu hình mail gửi otp
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: huynhnhutduong7112003@gmail.com # gmail của sender
+    password: mval orll zkxu ewim # quản lý tk gg -> xác thực 2 lớp -> app password -> create -> copy + paste pass
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+  # cấu hình redis
+  redis:
+    host: localhost
+    port: 6379
+    password: 123456
+    timeout: 6000ms
+    connect-timeout: 6000ms
+  data:
+    redis:
+      client-type: jedis
 idp:
   url: http://localhost:9091
   client-id: superapp
-  client-secret: a8UPbI8aUTPTcTMAblwxRv7lLDS7JCRv
+  client-secret: BkLUNboGIlzhI6FiE9MrZJGwDbcZZ5lz
 keycloak:
   realm: SuperApp
   admin-username: admin

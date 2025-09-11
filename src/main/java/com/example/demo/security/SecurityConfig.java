@@ -24,10 +24,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(
-                request -> request.requestMatchers(PUBLIC_ENDPOINTS)
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated());
+                request -> request
+                        .requestMatchers("/auth/**", "/api/password/**").permitAll()
+                        .requestMatchers("/api/stock/**", "/api/trading/**", "/api/order").authenticated());
 
         httpSecurity.oauth2ResourceServer(
                 oauth2 -> oauth2.jwt(

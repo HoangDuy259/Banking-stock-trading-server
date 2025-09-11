@@ -21,7 +21,7 @@ import java.util.UUID;
 public class BankAccount extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "account_id", updatable = false, nullable = false)
+    @Column(name = "bank_account_id", updatable = false, nullable = false)
     UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

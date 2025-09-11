@@ -25,7 +25,7 @@ public class PasswordResetService {
     }
 
     public void sendOtp(String email) {
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User không tồn tại"));
 
         String otp = String.format("%06d", new Random().nextInt(999999));
@@ -38,7 +38,7 @@ public class PasswordResetService {
     }
 
     public boolean resetPassword(String email, String otp, String newPassword) {
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User không tồn tại"));
 
         String cachedOtp = otpRedisService.getOtp(email);

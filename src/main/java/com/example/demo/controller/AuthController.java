@@ -8,6 +8,7 @@ import com.example.demo.dto.response.user.UserResponse;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
+import com.example.demo.service.impl.AuthService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
-    UserService userService;
+    AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserResponse>> register(
@@ -37,7 +38,7 @@ public class AuthController {
         try {
             return ResponseEntity.status(CREATED)
                     .body(new ApiResponse<>("Đăng ký thành công",
-                            userService.register(userRegisterRequest)));
+                            authService.register(userRegisterRequest)));
         }catch (IllegalArgumentException  e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse<>(e.getMessage(), null));
@@ -50,7 +51,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenExchangeResponse>> login(@RequestBody @Valid LoginRequest loginRequest) {
         try {
-            TokenExchangeResponse tokenResponse = userService.login(loginRequest);
+            TokenExchangeResponse tokenResponse = authService.login(loginRequest);
             return ResponseEntity.ok(new ApiResponse<>("Đăng nhập thành công", tokenResponse));
         } catch (AuthenticationException | DisabledException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
