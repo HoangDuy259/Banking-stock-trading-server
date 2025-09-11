@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.request.roles.RoleRequest;
 import com.example.demo.entity.Role;
-import com.example.demo.service.impl.RoleService;
+import com.example.demo.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
