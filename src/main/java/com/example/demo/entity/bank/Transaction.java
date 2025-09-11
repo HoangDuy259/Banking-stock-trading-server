@@ -23,11 +23,11 @@ public class Transaction extends BaseEntity {
     @Column(name = "transaction_id", nullable = false, length = 50)
     UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "sourceAccount_id", nullable = false)
     BankAccount sourceAccount;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "destinationAccount_id", nullable = false)
     BankAccount destinationAccount;
 
