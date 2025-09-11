@@ -1,6 +1,6 @@
 package com.example.demo.utils.enums;
 
-public enum BankAccountStatus {
+public enum AccountStatus {
     ACTIVE,       // tài khoản đang hoạt động
     INACTIVE,     // tài khoản bị vô hiệu hóa
 }

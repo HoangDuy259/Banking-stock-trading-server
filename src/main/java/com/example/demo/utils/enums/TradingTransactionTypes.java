@@ -1,7 +1,8 @@
 package com.example.demo.utils.enums;
 
-public enum TransactionTypes {
-    TRANSFER, //Chuyen tien
+public enum TradingTransactionTypes {
     WITHDRAW, //Rut tien
     DEPOSIT, //Nap tien
+    BUY, //Mua
+    SELL, //Ban
 }

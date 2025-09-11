@@ -3,7 +3,7 @@ package com.example.demo.entity.bank;
 
 import com.example.demo.entity.BaseEntity;
 import com.example.demo.entity.User;
-import com.example.demo.utils.enums.BankAccountStatus;
+import com.example.demo.utils.enums.AccountStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -36,5 +36,5 @@ public class BankAccount extends BaseEntity {
 
     @Column(name = "status", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
-    BankAccountStatus status;
+    AccountStatus status;
 }
