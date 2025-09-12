@@ -1,11 +1,17 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.bank.BankAccountRequest;
+import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.bank.BankAccountResponse;
 import com.example.demo.entity.bank.BankAccount;
+import com.example.demo.mapper.BankAccountMapper;
 import com.example.demo.service.bank_account.IBankAccountService;
+import com.example.demo.utils.auth.AuthUtils;
 import com.example.demo.utils.enums.AccountStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
+import org.keycloak.authorization.client.util.Http;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,41 +24,37 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/bank-accounts")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BankAccountController {
 
-    private final IBankAccountService bankAccountService;
+    IBankAccountService bankAccountService;
+    AuthUtils authUtils;
+    BankAccountMapper bankAccountMapper;
 
     // tạo account mới cho 1 user
     @PostMapping
-    public ResponseEntity<BankAccount> createBankAccount(@RequestBody BankAccountRequest dto) {
-        BankAccount account = bankAccountService.createBankAccount(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(account);
+    public ResponseEntity<ApiResponse<BankAccountResponse>>createBankAccount(HttpServletRequest request) {
+        String username = authUtils.getAuthenticationUsername();
+
+        BankAccount account = bankAccountService.createBankAccount(username);
+
+        ApiResponse<BankAccountResponse> res = ApiResponse.<BankAccountResponse>builder()
+                .message("Tạo tài khoản thành công")
+                .result(bankAccountMapper.toDto(account))
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
     // lấy tất cả account của 1 user
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<BankAccountResponse>> getAccountsByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(bankAccountService.getAccountsByUser(userId));
+    public ResponseEntity<ApiResponse<List<BankAccountResponse>>> getAccountsByUser(@PathVariable Long userId) {
+        List<BankAccountResponse> accounts = bankAccountService.getAccountsByUser(userId);
+
+        ApiResponse<List<BankAccountResponse>> res = ApiResponse.<List<BankAccountResponse>>builder()
+                .message("Danh sách của người dùng: " + userId)
+                .result(accounts)
+                .build();
+        return ResponseEntity.ok(res);
     }
-
-    // lấy chi tiết 1 account
-//    @GetMapping("/{id}")
-//    public ResponseEntity<BankAccountResponse> getById(@PathVariable UUID id) {
-//        return ResponseEntity.ok(bankAccountService.getById(id));
-//    }
-
-    // cập nhật trạng thái account (VD: OPEN -> CLOSED)
-//    @PatchMapping("/{id}/status")
-//    public ResponseEntity<BankAccount> updateStatus(@PathVariable UUID id,
-//                                                    @RequestParam AccountStatus status) {
-//        return ResponseEntity.ok(bankAccountService.updateStatus(id, status));
-//    }
-
-    // xoá account
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteAccount(@PathVariable UUID id) {
-//        bankAccountService.deleteAccount(id);
-//        return ResponseEntity.noContent().build();
-//    }
 }
 
