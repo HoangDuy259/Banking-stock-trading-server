@@ -4,6 +4,6 @@ import com.example.demo.dto.request.stock.TradingAccountCreateRequest;
 import com.example.demo.dto.response.stock.TradingAccountResponse;
 
 public interface ITradingAccountService {
-    TradingAccountResponse get();
+    TradingAccountResponse get(String accountNumber);
     TradingAccountResponse create(TradingAccountCreateRequest request);
 }
