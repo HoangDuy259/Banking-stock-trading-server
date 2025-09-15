@@ -14,9 +14,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PorfolioCreateRequest {
-    @NotNull(message = "User name cannot be null")
-    String username; // username cua user
-
     @NotNull(message = "Portfolio's name cannot be null")
     String portfolioName; // ten danh muc dau tu
 }
