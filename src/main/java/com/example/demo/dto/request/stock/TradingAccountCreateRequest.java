@@ -14,12 +14,6 @@ import java.math.BigDecimal;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TradingAccountCreateRequest {
-    @NotNull(message = "User name can not be null")
-    String username;
-
     @NotBlank
     String accountNumber;
-
-    @NotNull
-    BigDecimal cashBalance;
 }
