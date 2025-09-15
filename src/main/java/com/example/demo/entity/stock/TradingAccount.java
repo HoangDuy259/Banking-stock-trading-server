@@ -22,6 +22,7 @@ import java.util.UUID;
 public class TradingAccount extends BaseEntity {
     @Id
     @Column(name = "trading_account_id", nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -31,9 +32,6 @@ public class TradingAccount extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "bank_account_id", nullable = true)
     BankAccount bankAccount;
-
-    @Column(name = "account_number", nullable = false, unique = true, length = 50)
-    String accountNumber;
 
     @Column(name = "cash_balance", nullable = false, precision = 19, scale = 2)
     BigDecimal cashBalance = BigDecimal.ZERO;

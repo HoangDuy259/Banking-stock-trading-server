@@ -33,7 +33,7 @@ public class BankAccountController {
 
     // tạo account mới cho 1 user
     @PostMapping
-    public ResponseEntity<ApiResponse<BankAccountResponse>>createBankAccount(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<BankAccountResponse>>createBankAccount() {
         String username = authUtils.getAuthenticationUsername();
 
         BankAccount account = bankAccountService.createBankAccount(username);
