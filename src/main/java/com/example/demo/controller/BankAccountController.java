@@ -33,13 +33,13 @@ public class BankAccountController {
 
     // tạo account mới cho 1 user
     @PostMapping
-    public ResponseEntity<ApiResponse<BankAccountResponse>>createBankAccount(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<BankAccountResponse>>createBankAccount() {
         String username = authUtils.getAuthenticationUsername();
 
         BankAccount account = bankAccountService.createBankAccount(username);
 
         ApiResponse<BankAccountResponse> res = ApiResponse.<BankAccountResponse>builder()
-                .message("Tạo tài khoản thành công")
+                .message("Tạo tài khoản thành công.")
                 .result(bankAccountMapper.toDto(account))
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
@@ -53,6 +53,27 @@ public class BankAccountController {
         ApiResponse<List<BankAccountResponse>> res = ApiResponse.<List<BankAccountResponse>>builder()
                 .message("Danh sách của người dùng: " + userId)
                 .result(accounts)
+                .build();
+        return ResponseEntity.ok(res);
+    }
+
+    // khóa tài khoản
+    @PatchMapping("/{accId}/lock")
+    public ResponseEntity<ApiResponse<BankAccountResponse>> lockAccount(@PathVariable UUID accId){
+        BankAccountResponse updatedAccount = bankAccountService.lockAccount(accId);
+        ApiResponse<BankAccountResponse> res = ApiResponse.<BankAccountResponse>builder()
+                .message("Khóa tài khoản thành công.")
+                .result(updatedAccount)
+                .build();
+        return ResponseEntity.ok(res);
+    }
+
+    @PatchMapping("/{accId}/unlock")
+    public ResponseEntity<ApiResponse<BankAccountResponse>> unlockAccount(@PathVariable UUID accId){
+        BankAccountResponse updatedAccount = bankAccountService.unlockAccount(accId);
+        ApiResponse<BankAccountResponse> res = ApiResponse.<BankAccountResponse>builder()
+                .message("Mở khóa tài khoản thành công.")
+                .result(updatedAccount)
                 .build();
         return ResponseEntity.ok(res);
     }

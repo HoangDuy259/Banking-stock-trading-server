@@ -23,25 +23,26 @@ public class Transaction extends BaseEntity {
     @Column(name = "transaction_id", nullable = false, length = 50)
     UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "sourceAccount_id", nullable = false)
     BankAccount sourceAccount;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "destinationAccount_id", nullable = false)
     BankAccount destinationAccount;
 
     @Column(name = "amount", nullable = false, precision = 19, scale = 2)
     BigDecimal amount;
 
-    // Loại giao dịch: TRANSFER, DEPOSIT, WITHDRAW
     @Column(name = "transaction_type", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     TransactionTypes transactionType;
 
-    // Trạng thái: SUCCESS, FAILED, PENDING
     @Column(name = "status", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     TransactionStatus status;
+
+    @Column(length = 500)
+    String description;
 }
 
