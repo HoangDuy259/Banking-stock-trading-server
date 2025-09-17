@@ -1,10 +1,9 @@
 package com.example.demo.service.bank_account;
 
-import com.example.demo.dto.request.bank.BankAccountRequest;
 import com.example.demo.dto.response.bank.BankAccountResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.bank.BankAccount;
-//import com.example.demo.mapper.BankAccountMapper;
+import com.example.demo.exception.ExistsException;
 import com.example.demo.mapper.BankAccountMapper;
 import com.example.demo.repository.BankAccountRepository;
 import com.example.demo.repository.UserRepository;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -46,6 +46,24 @@ public class BankAccountService implements IBankAccountService {
 
         List<BankAccount> accounts = bankAccountRepository.findAllByUser_Id(userId);
         return bankAccountMapper.toDtoList(accounts);
+    }
+
+    @Override
+    public BankAccountResponse lockAccount(UUID accId){
+        BankAccount account = bankAccountRepository.findById(accId)
+                .orElseThrow(() -> new ExistsException("Tài khoản không tồn tại."));
+        account.setStatus(AccountStatus.INACTIVE);
+        bankAccountRepository.save(account);
+        return bankAccountMapper.toDto(account);
+    }
+
+    @Override
+    public BankAccountResponse unlockAccount(UUID accId){
+        BankAccount account = bankAccountRepository.findById(accId)
+                .orElseThrow(() -> new ExistsException("Tài khoản không tồn tại."));
+        account.setStatus(AccountStatus.INACTIVE);
+        bankAccountRepository.save(account);
+        return bankAccountMapper.toDto(account);
     }
 
 }
