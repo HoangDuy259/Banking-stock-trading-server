@@ -77,5 +77,15 @@ public class BankAccountController {
                 .build();
         return ResponseEntity.ok(res);
     }
+
+    @GetMapping("/find")
+    public ResponseEntity<ApiResponse<BankAccountResponse>> unlockAccount(@RequestParam String accNum) {
+        BankAccountResponse foundedAccount = bankAccountService.findAccountByAccountNumber(accNum);
+        ApiResponse<BankAccountResponse> res = ApiResponse.<BankAccountResponse>builder()
+                .message("Tìm thấy tài khoản.")
+                .result(foundedAccount)
+                .build();
+        return ResponseEntity.ok(res);
+    }
 }
 

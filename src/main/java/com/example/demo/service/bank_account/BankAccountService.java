@@ -11,6 +11,7 @@ import com.example.demo.utils.bank.BankAccountUtils;
 import com.example.demo.utils.enums.AccountStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -63,6 +64,14 @@ public class BankAccountService implements IBankAccountService {
                 .orElseThrow(() -> new ExistsException("Tài khoản không tồn tại."));
         account.setStatus(AccountStatus.INACTIVE);
         bankAccountRepository.save(account);
+        return bankAccountMapper.toDto(account);
+    }
+
+    @Override
+    public BankAccountResponse findAccountByAccountNumber(String accNum){
+        BankAccount account = bankAccountRepository.findByAccountNumber(accNum)
+                .orElseThrow(() -> new ExistsException("Tài khoản không tồn tại."));
+
         return bankAccountMapper.toDto(account);
     }
 
