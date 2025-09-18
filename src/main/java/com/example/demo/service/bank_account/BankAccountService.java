@@ -3,6 +3,7 @@ import com.example.demo.dto.response.bank.BankAccountResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.bank.BankAccount;
 //import com.example.demo.mapper.BankAccountMapper;
+import com.example.demo.exception.ExistsException;
 import com.example.demo.mapper.BankAccountMapper;
 import com.example.demo.repository.BankAccountRepository;
 import com.example.demo.repository.UserRepository;
@@ -48,13 +49,21 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override
-    public BankAccountResponse lockAccount(UUID accId) {
-        return null;
+    public BankAccountResponse lockAccount(UUID accId){
+        BankAccount account = bankAccountRepository.findById(accId)
+                .orElseThrow(() -> new ExistsException("Tài khoản không tồn tại."));
+        account.setStatus(AccountStatus.INACTIVE);
+        bankAccountRepository.save(account);
+        return bankAccountMapper.toDto(account);
     }
 
     @Override
-    public BankAccountResponse unlockAccount(UUID accId) {
-        return null;
+    public BankAccountResponse unlockAccount(UUID accId){
+        BankAccount account = bankAccountRepository.findById(accId)
+                .orElseThrow(() -> new ExistsException("Tài khoản không tồn tại."));
+        account.setStatus(AccountStatus.INACTIVE);
+        bankAccountRepository.save(account);
+        return bankAccountMapper.toDto(account);
     }
 
 }
