@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -44,6 +45,16 @@ public class BankAccountService implements IBankAccountService {
 
         List<BankAccount> accounts = bankAccountRepository.findAllByUser_Id(userId);
         return bankAccountMapper.toDtoList(accounts);
+    }
+
+    @Override
+    public BankAccountResponse lockAccount(UUID accId) {
+        return null;
+    }
+
+    @Override
+    public BankAccountResponse unlockAccount(UUID accId) {
+        return null;
     }
 
 }
