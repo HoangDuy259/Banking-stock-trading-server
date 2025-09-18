@@ -1,6 +1,4 @@
 package com.example.demo.service.bank_account;
-
-import com.example.demo.dto.request.bank.BankAccountRequest;
 import com.example.demo.dto.response.bank.BankAccountResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.bank.BankAccount;
@@ -17,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BankAccountService implements IBankAccountService {

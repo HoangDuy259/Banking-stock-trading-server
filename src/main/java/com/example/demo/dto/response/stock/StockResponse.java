@@ -1,6 +1,5 @@
 package com.example.demo.dto.response.stock;
 
-import com.example.demo.utils.enums.OrderTypes;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,9 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderResponse {
-    TradingAccountResponse tradingAccount;
-    StockResponse stock;
-    OrderTypes orderType;
-    Integer quantity;
+public class StockResponse {
+    String symbol;
+    String organName;
 }

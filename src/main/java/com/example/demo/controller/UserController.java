@@ -2,9 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.user.UserResponse;
-import com.example.demo.service.interfaces.UserService;
+import com.example.demo.service.user.IUserService;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,10 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/user")
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
-    UserService userService;
+    IUserService userService;
     @GetMapping("/myInfo")
     public ResponseEntity<ApiResponse<UserResponse>> getMyInfo(){
         try {

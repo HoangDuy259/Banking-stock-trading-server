@@ -1,6 +1,8 @@
-package com.example.demo.entity.stock;
+package com.example.demo.entity.trading_transaction;
 
 import com.example.demo.entity.BaseEntity;
+import com.example.demo.entity.stock.Stock;
+import com.example.demo.entity.trading_account.TradingAccount;
 import com.example.demo.utils.enums.OrderStatus;
 import com.example.demo.utils.enums.OrderTypes;
 import jakarta.persistence.*;

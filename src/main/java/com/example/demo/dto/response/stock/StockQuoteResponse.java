@@ -1,17 +1,19 @@
 package com.example.demo.dto.response.stock;
 
-import com.example.demo.utils.enums.OrderTypes;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.math.BigDecimal;
+import java.time.Instant;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderResponse {
-    TradingAccountResponse tradingAccount;
-    StockResponse stock;
-    OrderTypes orderType;
-    Integer quantity;
+public class StockQuoteResponse {
+    StockResponse stockResponse;
+    BigDecimal price;
+    Long volume;
+    String timestamp;
 }

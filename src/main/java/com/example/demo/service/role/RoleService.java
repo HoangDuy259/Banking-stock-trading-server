@@ -4,21 +4,17 @@ import com.example.demo.dto.request.roles.RoleRequest;
 import com.example.demo.entity.Role;
 import com.example.demo.repository.RoleRepository;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-//@NoArgsConstructor
-//@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class RoleService implements IRoleService {
     private final RoleRepository roleRepository;
-
-    public RoleService(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
 
     @Override
     public Role createRole(@Valid @RequestBody RoleRequest role) {

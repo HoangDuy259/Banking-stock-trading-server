@@ -1,6 +1,5 @@
-package com.example.demo.dto.response.stock;
+package com.example.demo.dto.request.trading_account;
 
-import com.example.demo.entity.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,7 +8,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PortfolioResponse {
-    User user;
-    String name;
+public class TradingAccountRequest {
+    String bankAccountId;
 }
