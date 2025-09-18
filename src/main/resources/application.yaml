@@ -17,7 +17,11 @@ spring:
       format_sql: true
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: update   # hoặc validate, tuỳ nhu cầu
+      properties:
+        hibernate:
+          format_sql: true
+      show-sql: true
   security:
     oauth2:
       resourceserver:
@@ -46,10 +50,17 @@ spring:
   data:
     redis:
       client-type: jedis
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: stock-consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 idp:
   url: http://localhost:9091
   client-id: superapp
-  client-secret: BkLUNboGIlzhI6FiE9MrZJGwDbcZZ5lz
+  client-secret: 4ya7QMc8Y5zW54x5J8Pxk4FXWvyIee99
 keycloak:
   realm: SuperApp
   admin-username: admin

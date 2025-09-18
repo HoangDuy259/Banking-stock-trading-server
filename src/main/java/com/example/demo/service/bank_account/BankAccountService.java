@@ -1,8 +1,8 @@
 package com.example.demo.service.bank_account;
-
 import com.example.demo.dto.response.bank.BankAccountResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.bank.BankAccount;
+//import com.example.demo.mapper.BankAccountMapper;
 import com.example.demo.exception.ExistsException;
 import com.example.demo.mapper.BankAccountMapper;
 import com.example.demo.repository.BankAccountRepository;
@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BankAccountService implements IBankAccountService {

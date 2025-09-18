@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -24,10 +25,7 @@ public class Stock extends BaseEntity {
     @Column(name = "symbol", nullable = false, unique = true)
     String symbol;
 
-    @Column(name = "company_name", nullable = true)
-    String companyName;
-
-    @Column(name = "current_price", nullable = false, precision = 19, scale = 2)
-    BigDecimal currentPrice = BigDecimal.ZERO;
+    @Column(name = "organ_name", nullable = false)
+    String organName;
 
 }

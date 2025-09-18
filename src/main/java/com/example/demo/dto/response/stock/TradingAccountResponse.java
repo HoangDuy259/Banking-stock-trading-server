@@ -1,6 +1,8 @@
 package com.example.demo.dto.response.stock;
 
 
+import com.example.demo.dto.response.bank.BankAccountResponse;
+import com.example.demo.dto.response.user.UserResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.bank.BankAccount;
 import com.example.demo.utils.enums.AccountStatus;
@@ -15,9 +17,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TradingAccountResponse {
-    User user;
-    String accountNumber;
-    BankAccount bankAccount;
+    UserResponse user;
+    BankAccountResponse bankAccount;
     BigDecimal cashBalance;
-    AccountStatus accountStatus;
+    AccountStatus status;
 }

@@ -1,15 +1,12 @@
-package com.example.demo.entity.stock;
+package com.example.demo.entity.trading_account;
 
 import com.example.demo.entity.BaseEntity;
-import com.example.demo.entity.User;
-import com.example.demo.entity.bank.BankAccount;
-import com.example.demo.utils.enums.AccountStatus;
+import com.example.demo.entity.stock.Stock;
 import com.example.demo.utils.enums.TradingTransactionTypes;
 import com.example.demo.utils.enums.TransactionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.apache.james.mime4j.message.AbstractEntity;
 
 import java.math.BigDecimal;
 import java.util.UUID;

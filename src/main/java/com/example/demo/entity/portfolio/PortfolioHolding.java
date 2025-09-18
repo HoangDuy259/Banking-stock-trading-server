@@ -1,5 +1,6 @@
-package com.example.demo.entity.stock;
+package com.example.demo.entity.portfolio;
 
+import com.example.demo.entity.stock.Stock;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

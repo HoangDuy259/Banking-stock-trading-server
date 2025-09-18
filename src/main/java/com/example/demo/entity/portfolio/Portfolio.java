@@ -1,4 +1,4 @@
-package com.example.demo.entity.stock;
+package com.example.demo.entity.portfolio;
 
 import com.example.demo.entity.BaseEntity;
 import com.example.demo.entity.User;
