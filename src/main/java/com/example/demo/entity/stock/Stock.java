@@ -20,7 +20,7 @@ public class Stock extends BaseEntity {
     @Id
     @Column(name = "stock_id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
-    UUID id;
+    UUID stockId;
 
     @Column(name = "symbol", nullable = false, unique = true)
     String symbol;

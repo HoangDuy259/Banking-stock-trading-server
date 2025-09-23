@@ -23,7 +23,7 @@ public class TradingAccount extends BaseEntity {
     @Id
     @Column(name = "trading_account_id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
-    UUID id;
+    UUID tradingAccountId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

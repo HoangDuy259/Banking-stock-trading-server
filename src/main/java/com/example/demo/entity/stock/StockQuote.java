@@ -19,7 +19,7 @@ public class StockQuote extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "quote_id", nullable = false, updatable = false)
-    UUID id;
+    UUID stockQuoteId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id", nullable = false)
@@ -31,6 +31,12 @@ public class StockQuote extends BaseEntity {
     @Column(name = "volume", nullable = false)
     Long volume;
 
-    @Column(nullable = false)
+    @Column(name = "ceiling_price", nullable = false, precision = 19, scale = 2)
+    BigDecimal ceilingPrice;
+
+    @Column(name = "floor_price", nullable = false, precision = 19, scale = 2)
+    BigDecimal floorPrice;
+
+    @Column(name = "timestamp", nullable = false)
     String timestamp;
 }

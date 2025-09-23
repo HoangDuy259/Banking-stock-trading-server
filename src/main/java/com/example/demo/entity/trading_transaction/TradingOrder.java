@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -18,28 +19,31 @@ import java.util.UUID;
 @Setter
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Order extends BaseEntity {
+public class TradingOrder extends BaseEntity {
     @Id
-    @Column(name = "order_id", nullable = false, updatable = false)
+    @Column(name = "trading_order_id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
-    UUID orderId;
+    UUID tradingOrderId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_account_id", nullable = false)
-    TradingAccount account;
+    TradingAccount tradingAccount;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id", nullable = false)
     Stock stock;
 
-    @Column(name = "order_type", nullable = false, unique = true, length = 50)
+    @Column(name = "order_type", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     OrderTypes orderType;
 
-    @Column(name = "quantity", nullable = true)
+    @Column(name = "quantity", nullable = false)
     Integer quantity;
+
+    @Column(name = "price", nullable = false, precision = 19, scale = 2)
+    BigDecimal price;
 
     @Column(name = "order_status", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
-    OrderStatus status;
+    OrderStatus orderStatus;
 }

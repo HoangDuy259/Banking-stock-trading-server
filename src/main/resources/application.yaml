@@ -5,6 +5,10 @@ server:
 
 
 spring:
+  sql:
+    init:
+      mode: always
+      platform: postgres
   datasource:
     url: "jdbc:postgresql://localhost:5432/app-demo-be"
     username: "postgres"

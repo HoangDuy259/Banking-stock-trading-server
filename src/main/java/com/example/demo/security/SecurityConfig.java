@@ -26,7 +26,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(
                 request -> request
                         .requestMatchers("/auth/**", "/api/password/**").permitAll()
-                        .requestMatchers("/stock/**", "/trading-account/**", "/order", "/bank-accounts/**", "/portfolios/**").authenticated());
+                        .requestMatchers("/stock/**", "/trading-account/**", "/bank-accounts/**", "/portfolios/**","/trading-order/**", "/stock-quotes/**").authenticated());
 
         httpSecurity.oauth2ResourceServer(
                 oauth2 -> oauth2.jwt(

@@ -11,12 +11,14 @@ import com.example.demo.utils.bank.BankAccountUtils;
 import com.example.demo.utils.enums.AccountStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -45,6 +47,7 @@ public class BankAccountService implements IBankAccountService {
     public List<BankAccountResponse> getAccountsByUser(Long userId) {
 
         List<BankAccount> accounts = bankAccountRepository.findAllByUser_Id(userId);
+        log.info("getAccountsByUser: " + accounts);
         return bankAccountMapper.toDtoList(accounts);
     }
 

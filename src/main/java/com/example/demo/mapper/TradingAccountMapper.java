@@ -1,7 +1,7 @@
 package com.example.demo.mapper;
 
 //import com.example.demo.dto.request.stock.TradingAccountCreateRequest;
-import com.example.demo.dto.response.stock.TradingAccountResponse;
+import com.example.demo.dto.response.tradingAccount.TradingAccountResponse;
         import com.example.demo.entity.trading_account.TradingAccount;
 import org.mapstruct.Mapper;
 
