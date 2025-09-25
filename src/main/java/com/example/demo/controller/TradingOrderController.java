@@ -4,7 +4,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.request.tradingOrder.TradingOrderRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.tradingOrder.TradingOrderResponse;
-import com.example.demo.service.order.ITradingOrderService;
+import com.example.demo.service.trading_order.ITradingOrderService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.CREATED;
 

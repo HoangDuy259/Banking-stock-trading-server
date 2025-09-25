@@ -1,8 +1,9 @@
-package com.example.demo.service.order;
+package com.example.demo.service.trading_order;
 
 import com.example.demo.dto.request.tradingOrder.TradingOrderRequest;
 import com.example.demo.dto.response.stock.StockQuoteResponse;
 import com.example.demo.dto.response.tradingOrder.TradingOrderResponse;
+import com.example.demo.entity.event.TradingOrderEvents;
 import com.example.demo.entity.stock.Stock;
 import com.example.demo.entity.trading_account.TradingAccount;
 import com.example.demo.entity.trading_transaction.TradingOrder;
@@ -13,6 +14,7 @@ import com.example.demo.repository.StockRepository;
 import com.example.demo.repository.TradingAccountRepository;
 import com.example.demo.repository.TradingOrderRepository;
 import com.example.demo.service.stock_quote.StockQuoteService;
+import com.example.demo.service.trading_order_producer.TradingOrderProducer;
 import com.example.demo.utils.enums.OrderStatus;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 @Slf4j
@@ -38,6 +40,7 @@ public class TradingOrderService implements ITradingOrderService {
     StockQuoteService stockQuoteService;
     OrderMapper orderMapper;
     TradingOrderMapper tradingOrderMapper;
+    TradingOrderProducer tradingOrderProducer;
 
     @Override
     public TradingOrderResponse placeOrder(TradingOrderRequest request) {
@@ -94,9 +97,22 @@ public class TradingOrderService implements ITradingOrderService {
         tradingOrder.setPrice(price);
         tradingOrder.setOrderType(request.getOrderType());
         tradingOrder.setOrderStatus(OrderStatus.PENDING);
+        // Save order to db
+        TradingOrder savedTradingOrder = orderRepository.save(tradingOrder);
+
+        // Publish order through kafka producer
+        TradingOrderEvents tradingOrderEvents = new TradingOrderEvents();
+        tradingOrderEvents.setTradingOrderId(savedTradingOrder.getTradingOrderId());
+        tradingOrderEvents.setTradingAccountId(savedTradingOrder.getTradingAccount().getTradingAccountId());
+        tradingOrderEvents.setStockId(savedTradingOrder.getStock().getStockId());
+        tradingOrderEvents.setPrice(savedTradingOrder.getPrice());
+        tradingOrderEvents.setQuantity(savedTradingOrder.getQuantity());
+        tradingOrderEvents.setStatus(savedTradingOrder.getOrderStatus());
+        tradingOrderEvents.setCreatedDate(LocalDateTime.now());
+        tradingOrderProducer.sendOrder(tradingOrderEvents);
 
         //save to db and return a response of order
-        return orderMapper.toOrderResponse(orderRepository.save(tradingOrder));
+        return orderMapper.toOrderResponse(savedTradingOrder);
     }
 
     @Override
