@@ -2,7 +2,6 @@ package com.example.demo.service.bank_account;
 import com.example.demo.dto.response.bank.BankAccountResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.bank.BankAccount;
-//import com.example.demo.mapper.BankAccountMapper;
 import com.example.demo.exception.ExistsException;
 import com.example.demo.mapper.BankAccountMapper;
 import com.example.demo.repository.BankAccountRepository;
@@ -67,6 +66,11 @@ public class BankAccountService implements IBankAccountService {
         account.setStatus(AccountStatus.INACTIVE);
         bankAccountRepository.save(account);
         return bankAccountMapper.toDto(account);
+    }
+
+    @Override
+    public BankAccountResponse findAccountByAccountNumber(String accNum) {
+        return null;
     }
 
 }

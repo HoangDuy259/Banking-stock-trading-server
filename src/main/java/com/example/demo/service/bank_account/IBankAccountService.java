@@ -11,4 +11,5 @@ public interface IBankAccountService{
     List<BankAccountResponse> getAccountsByUser(Long userId);
     BankAccountResponse lockAccount(UUID accId);
     BankAccountResponse unlockAccount(UUID accId);
+    BankAccountResponse findAccountByAccountNumber(String accNum);
 };
