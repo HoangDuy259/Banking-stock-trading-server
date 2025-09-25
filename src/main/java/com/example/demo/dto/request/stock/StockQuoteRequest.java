@@ -17,4 +17,6 @@ public class StockQuoteRequest {
     BigDecimal price;
     long volume;
     String timestamp;
+    BigDecimal ceilingPrice;
+    BigDecimal floorPrice;
 }

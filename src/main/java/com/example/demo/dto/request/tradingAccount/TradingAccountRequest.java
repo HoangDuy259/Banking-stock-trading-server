@@ -1,13 +1,12 @@
-package com.example.demo.dto.request.trading_account;
+package com.example.demo.dto.request.tradingAccount;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
+import java.util.UUID;
+
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TradingAccountRequest {
-    String bankAccountId;
+    UUID bankAccountId;
 }

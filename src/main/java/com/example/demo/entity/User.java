@@ -32,5 +32,4 @@ public class User extends BaseEntity {
     String password;
 
     Boolean enabled;
-
 }

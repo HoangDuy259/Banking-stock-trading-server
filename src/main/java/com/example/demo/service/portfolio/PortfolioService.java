@@ -2,7 +2,7 @@ package com.example.demo.service.portfolio;
 
 
 import com.example.demo.dto.request.portfolio.PortfolioCreateRequest;
-import com.example.demo.dto.response.stock.PortfolioResponse;
+import com.example.demo.dto.response.portfolio.PortfolioResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.portfolio.Portfolio;
 import com.example.demo.mapper.PortfolioMapper;
@@ -26,9 +26,6 @@ public class PortfolioService implements IPortfolioService {
 
     @Override
     public PortfolioResponse create(PortfolioCreateRequest request) {
-        if(portfolioRespository.findByName(request.getPortfolioName()) != null){
-            throw new RuntimeException("Portfolio already exists");
-        }
         User user = userContextUtils.getAuthenticationUsername();
         Portfolio portfolio = new Portfolio();
         portfolio.setName(request.getPortfolioName());

@@ -2,7 +2,6 @@ package com.example.demo.service.bank_account;
 import com.example.demo.dto.response.bank.BankAccountResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.bank.BankAccount;
-//import com.example.demo.mapper.BankAccountMapper;
 import com.example.demo.exception.ExistsException;
 import com.example.demo.mapper.BankAccountMapper;
 import com.example.demo.repository.BankAccountRepository;
@@ -11,13 +10,14 @@ import com.example.demo.utils.bank.BankAccountUtils;
 import com.example.demo.utils.enums.AccountStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.apache.kafka.common.errors.ResourceNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -46,6 +46,7 @@ public class BankAccountService implements IBankAccountService {
     public List<BankAccountResponse> getAccountsByUser(Long userId) {
 
         List<BankAccount> accounts = bankAccountRepository.findAllByUser_Id(userId);
+        log.info("getAccountsByUser: " + accounts);
         return bankAccountMapper.toDtoList(accounts);
     }
 
@@ -68,11 +69,8 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override
-    public BankAccountResponse findAccountByAccountNumber(String accNum){
-        BankAccount account = bankAccountRepository.findByAccountNumber(accNum)
-                .orElseThrow(() -> new ExistsException("Tài khoản không tồn tại."));
-
-        return bankAccountMapper.toDto(account);
+    public BankAccountResponse findAccountByAccountNumber(String accNum) {
+        return null;
     }
 
 }

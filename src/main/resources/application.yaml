@@ -5,6 +5,10 @@ server:
 
 
 spring:
+  sql:
+    init:
+      mode: always
+      platform: postgres
   datasource:
     url: "jdbc:postgresql://localhost:5432/app-demo-be"
     username: "postgres"
@@ -52,6 +56,9 @@ spring:
       client-type: jedis
   kafka:
     bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
       group-id: stock-consumer-group
       auto-offset-reset: earliest

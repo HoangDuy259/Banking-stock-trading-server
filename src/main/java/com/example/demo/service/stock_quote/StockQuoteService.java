@@ -1,6 +1,7 @@
 package com.example.demo.service.stock_quote;
 
 import com.example.demo.dto.request.stock.StockQuoteRequest;
+import com.example.demo.dto.response.stock.StockQuoteResponse;
 import com.example.demo.entity.stock.Stock;
 import com.example.demo.entity.stock.StockQuote;
 import com.example.demo.mapper.StockQuoteMapper;
@@ -15,11 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class StockQuoteService {
+public class StockQuoteService implements IStockQuoteService {
     StockQuoteRepository stockQuoteRepository;
     StockRepository stockRepository;
     StockQuoteMapper stockQuoteMapper;
@@ -49,5 +54,22 @@ public class StockQuoteService {
             System.err.println("Error parsing message: " + message);
             e.printStackTrace();
         }
+    }
+
+    public List<StockQuoteResponse> getQuotesbyStock(UUID stockId) {
+        Stock stock = stockRepository.findById(stockId).orElseThrow(() -> new RuntimeException("Stock not found"));
+        List<StockQuoteResponse> stockQuoteResponses = new ArrayList<>();
+        List<StockQuote> stockQuotes = stockQuoteRepository.findStockQuoteByStock(stock);
+        stockQuotes.forEach(stockQuote -> {
+            StockQuoteResponse response = stockQuoteMapper.toResponse(stockQuote);
+            stockQuoteResponses.add(response);
+        });
+        return stockQuoteResponses;
+    }
+
+    public StockQuoteResponse getLastedQuote(Stock stock){
+        StockQuote stockQuote = stockQuoteRepository.findTopByStockOrderByTimestampDesc(stock)
+                .orElseThrow(() -> new RuntimeException("Stock quote not found"));
+        return stockQuoteMapper.toResponse(stockQuote);
     }
 }

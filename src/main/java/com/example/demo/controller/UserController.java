@@ -19,7 +19,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
     IUserService userService;
-    @GetMapping("/myInfo")
+    @GetMapping("/get-user")
     public ResponseEntity<ApiResponse<UserResponse>> getMyInfo(){
         try {
             return ResponseEntity.status(CREATED).body(
@@ -31,7 +31,7 @@ public class UserController {
 
     }
 
-    @GetMapping("/getAllUsers")
+    @GetMapping("/get-all-users")
     public ResponseEntity<ApiResponse<UserResponse>> getAllUsers(){
         try {
             return ResponseEntity.status(CREATED).body(
