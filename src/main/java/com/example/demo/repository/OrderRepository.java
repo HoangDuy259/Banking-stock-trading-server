@@ -1,6 +1,6 @@
 package com.example.demo.repository;
 
-import com.example.demo.entity.trading_transaction.TradingOrder;
+import com.example.demo.entity.trading_order.TradingOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
