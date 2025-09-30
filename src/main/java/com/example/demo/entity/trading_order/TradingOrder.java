@@ -1,4 +1,4 @@
-package com.example.demo.entity.trading_transaction;
+package com.example.demo.entity.trading_order;
 
 import com.example.demo.entity.BaseEntity;
 import com.example.demo.entity.stock.Stock;

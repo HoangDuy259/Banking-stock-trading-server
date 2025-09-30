@@ -1,5 +1,7 @@
 package com.example.demo.utils.enums;
 
+import lombok.Getter;
+
 public enum OrderStatus {
     PENDING,         // Đơn hàng mới tạo, đang chờ khớp
     FILLED,          // Đã khớp hoàn toàn
