@@ -1,4 +1,4 @@
-package com.example.demo.service.trading;
+package com.example.demo.service.trading_account;
 
 //import com.example.demo.dto.request.stock.TradingAccountCreateRequest;
 import com.example.demo.dto.request.tradingAccount.TradingAccountRequest;

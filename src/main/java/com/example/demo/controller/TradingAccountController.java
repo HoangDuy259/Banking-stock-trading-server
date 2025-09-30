@@ -5,7 +5,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.request.tradingAccount.TradingAccountRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.tradingAccount.TradingAccountResponse;
-import com.example.demo.service.trading.ITradingAccountService;
+import com.example.demo.service.trading_account.ITradingAccountService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
