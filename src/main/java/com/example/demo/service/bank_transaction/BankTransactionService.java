@@ -11,6 +11,7 @@ import com.example.demo.repository.BankAccountRepository;
 import com.example.demo.repository.BankTransactionRepository;
 import com.example.demo.utils.enums.TransactionStatus;
 import com.example.demo.utils.enums.TransactionTypes;
+import com.example.demo.utils.transaction.TransactionUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -37,27 +38,7 @@ public class BankTransactionService implements IBankTransactionService {
     BankTransactionRepository bankTransactionRepository;
     BankTransactionMapper bankTransactionMapper;
     TransactionTemplate transactionTemplate;
-    int MAX_RETRY = 5;
-    Long BASE_BACKOFF_MS = 100L;
-
-    // back off là 1 phần của retry với cơ chế 100ms * 2^n (n là min(attempt, 6) = 2^6)
-    private void backoff(int attempt) {
-        try {
-            long sleep = BASE_BACKOFF_MS * (1L << Math.min(attempt, 6));
-            Thread.sleep(sleep);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    // kiểm tra coi nó có bị lỗi tạm thời không
-    private boolean isRetryable(DataAccessException dae) {
-        // detect deadlock/lock exceptions from common Spring exceptions
-        return (dae instanceof PessimisticLockingFailureException) ||
-                (dae instanceof CannotAcquireLockException) ||
-                (dae instanceof DeadlockLoserDataAccessException) ||
-                (dae.getCause() != null && dae.getCause() instanceof PessimisticLockException);
-    }
+    TransactionUtils transactionUtils;
 
     @Override
     public void transfer(BankAccount fromAcc, BankAccount toAcc, BigDecimal amount){
@@ -111,8 +92,8 @@ public class BankTransactionService implements IBankTransactionService {
 
                 break;
             }catch(DataAccessException dae){
-                if(isRetryable(dae) && attempt < MAX_RETRY){
-                    backoff(attempt);
+                if(transactionUtils.isRetryable(dae) && attempt < transactionUtils.getMAX_RETRY()){
+                    transactionUtils.backoff(attempt);
                     continue;
                 }else{
                     Transaction failedTx = new Transaction();
