@@ -14,6 +14,7 @@ import java.util.List;
 public interface BankAccountMapper {
 
     @Mapping(source = "user", target = "user")
+    @Mapping(source = "createdDate", target = "createdDate")
     BankAccountResponse toDto(BankAccount bankAccount);
 
     @Mapping(source = "user", target = ".")

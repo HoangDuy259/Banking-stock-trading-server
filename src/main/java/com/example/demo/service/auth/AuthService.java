@@ -3,7 +3,9 @@ package com.example.demo.service.auth;
 import com.example.demo.dto.IdentityClient;
 import com.example.demo.dto.identity.ClientTokenExchangeParam;
 import com.example.demo.dto.identity.KeycloakProvider;
+import com.example.demo.dto.identity.LogoutRequest;
 import com.example.demo.dto.identity.TokenExchangeResponse;
+import com.example.demo.dto.request.auth.ForgotPassword;
 import com.example.demo.dto.request.auth.LoginRequest;
 import com.example.demo.dto.request.auth.UserRegisterRequest;
 import com.example.demo.dto.response.user.UserResponse;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import javax.security.sasl.AuthenticationException;
 import java.util.Random;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,11 @@ public class AuthService implements IAuthService{
 
 //    đăng ký
     public UserResponse register(UserRegisterRequest userRegisterRequest) {
+        boolean exists = userRepository.existsByUsername(userRegisterRequest.getUsername());
+        log.info("Check username exists: " + exists);
+        if (exists) {
+            throw new IllegalArgumentException("Username đã tồn tại");
+        }
         if (userRepository.existsByUsername(userRegisterRequest.getUsername())) {
             throw new IllegalArgumentException("Username đã tồn tại");
         }
@@ -66,11 +72,14 @@ public class AuthService implements IAuthService{
         User user = userRepository.findUserByEmail(loginRequest.getEmail()).orElseThrow( () ->
                 new AuthenticationException("User not found")
         );
-        log.info("user: "+ user.getUsername());
 
         // Kiểm tra nếu tài khoản bị vô hiệu hóa
         if (!user.getEnabled()) {
             throw new DisabledException("Tài khoản chưa được kích hoạt.");
+        }
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new AuthenticationException("Sai mật khẩu");
         }
 
         // Gửi request đến Keycloak để lấy token
@@ -79,9 +88,19 @@ public class AuthService implements IAuthService{
                 .client_id(keycloakProvider.getClientID())
                 .client_secret(keycloakProvider.getClientSecret())
                 .username(user.getUsername())
-                .password(user.getPassword())
+                .password(loginRequest.getPassword())
                 .scope("openid")
                 .build());
+    }
+
+    public void logout(String refreshToken) {
+        LogoutRequest param = LogoutRequest.builder()
+                .client_id(keycloakProvider.getClientID())
+                .client_secret(keycloakProvider.getClientSecret())
+                .refresh_token(refreshToken)
+                .build();
+
+        identityClient.logout(param);
     }
 
 //    reset password
@@ -98,20 +117,30 @@ public void sendOtp(String email) {
     emailService.sendOtpEmail(user.getEmail(), otp);
 }
 
-    public boolean resetPassword(String email, String otp, String newPassword) {
-        User user = userRepository.findUserByEmail(email)
+    public boolean resetPassword(ForgotPassword request) {
+        System.out.println("request" + request);
+        User user = userRepository.findUserByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User không tồn tại"));
 
-        String cachedOtp = otpRedisService.getOtp(email);
+        String cachedOtp = otpRedisService.getOtp(request.getEmail());
 
-        if (cachedOtp == null || !cachedOtp.equals(otp)) {
+        if (cachedOtp == null || !cachedOtp.equals(request.getOtp())) {
             return false; // OTP sai hoặc đã hết hạn
         }
 
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
 
-        otpRedisService.deleteOtp(email);
+        otpRedisService.deleteOtp(request.getEmail());
         return true;
+    }
+
+    public void verifyCredentials(String email, String password) throws AuthenticationException {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new AuthenticationException("User không tồn tại"));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new AuthenticationException("Sai mật khẩu");
+        }
     }
 }

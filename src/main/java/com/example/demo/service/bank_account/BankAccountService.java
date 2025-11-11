@@ -11,11 +11,12 @@ import com.example.demo.utils.enums.AccountStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,14 +40,86 @@ public class BankAccountService implements IBankAccountService {
         account.setAccountNumber(accountNumber);
         account.setBalance(BigDecimal.ZERO);
         account.setStatus(AccountStatus.ACTIVE);
+        account.setCreatedDate(LocalDateTime.now());
+        return bankAccountRepository.save(account);
+    }
+
+    // gợi ý số đẹp
+    @Override
+    public List<String> suggestAccountNumbers(String prefix, int count) {
+        if (prefix == null || prefix.isEmpty()) {
+            prefix = "11"; // mặc định
+        }
+        if (!prefix.matches("\\d+")) {
+            throw new IllegalArgumentException("Prefix must be numeric");
+        }
+        return bankAccountUtils.suggestBeautifulNumbers(prefix, count);
+    }
+
+    // tìm kiếm gần đúng
+    @Override
+    public List<String> searchSimilarAccountNumbers(String input) {
+        if (input == null || input.isEmpty() || !input.matches("\\d+")) {
+            return Collections.emptyList();
+        }
+
+        List<String> suggestions = new ArrayList<>();
+        Set<String> unique = new HashSet<>();
+
+        // Tạo 50 số gợi ý gần giống
+        while (suggestions.size() < 10) {
+            String candidate = bankAccountUtils.generateSimilarNumber(input);
+            if (unique.add(candidate) && !bankAccountRepository.existsByAccountNumber(candidate)) {
+                suggestions.add(candidate);
+            }
+        }
+
+        return suggestions;
+    }
+
+    // kiểm tra và tạo custom
+    @Override
+    public BankAccount createCustomAccount(String username, String desiredNumber) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng"));
+
+        // kiểm tra định dạng
+        if (!bankAccountUtils.isValidFormat(desiredNumber)) {
+            throw new IllegalArgumentException("Tài khoản phải có 11 chữ số");
+        }
+
+        // kiểm tra trùng
+        if (bankAccountRepository.existsByAccountNumber(desiredNumber)) {
+            throw new IllegalArgumentException("Tài khoản đã tồn tại");
+        }
+
+        BankAccount account = new BankAccount();
+        account.setUser(user);
+        account.setAccountNumber(desiredNumber);
+        account.setBalance(BigDecimal.ZERO);
+        account.setStatus(AccountStatus.ACTIVE);
+
         return bankAccountRepository.save(account);
     }
 
     @Override
     public List<BankAccountResponse> getAccountsByUser(Long userId) {
 
+        // Kiểm tra user tồn tại
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ExistsException("Người dùng không tồn tại."));
+
+        // Lấy danh sách tài khoản
         List<BankAccount> accounts = bankAccountRepository.findAllByUser_Id(userId);
-        log.info("getAccountsByUser: " + accounts);
+
+        if (accounts.isEmpty()) {
+            throw new ExistsException("Người dùng chưa có tài khoản nào.");
+        }
+
+        accounts.forEach(account ->
+                log.info("Account ID: {}, CreatedDate: {}", account.getId(), account.getCreatedDate())
+        );
+
         return bankAccountMapper.toDtoList(accounts);
     }
 
@@ -63,14 +136,16 @@ public class BankAccountService implements IBankAccountService {
     public BankAccountResponse unlockAccount(UUID accId){
         BankAccount account = bankAccountRepository.findById(accId)
                 .orElseThrow(() -> new ExistsException("Tài khoản không tồn tại."));
-        account.setStatus(AccountStatus.INACTIVE);
+        account.setStatus(AccountStatus.ACTIVE);
         bankAccountRepository.save(account);
         return bankAccountMapper.toDto(account);
     }
 
     @Override
     public BankAccountResponse findAccountByAccountNumber(String accNum) {
-        return null;
+        BankAccount account = bankAccountRepository.findBankAccountByAccountNumber(accNum)
+                .orElseThrow(() -> new ExistsException("Tài khoản không tồn tại."));
+        return bankAccountMapper.toDto(account);
     }
 
 }

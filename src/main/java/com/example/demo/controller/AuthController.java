@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.identity.TokenExchangeResponse;
+import com.example.demo.dto.request.auth.ForgotPassword;
 import com.example.demo.dto.request.auth.LoginRequest;
 import com.example.demo.dto.request.auth.UserRegisterRequest;
 import com.example.demo.dto.response.ApiResponse;
@@ -55,7 +56,25 @@ public class AuthController {
         }
     }
 
-//    gửi otp
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestParam String refreshToken) {
+        authService.logout(refreshToken);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<ApiResponse<Boolean>> verify(@RequestBody @Valid LoginRequest loginRequest) {
+        try {
+            authService.verifyCredentials(loginRequest.getEmail(), loginRequest.getPassword());
+            return ResponseEntity.ok(new ApiResponse<>("Đăng nhập thành công", true));
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse<>(e.getMessage(), false));
+        }
+    }
+
+
+    //    gửi otp
     @PostMapping("/request-otp")
     public ResponseEntity<?> requestOtp(@RequestParam String email) {
         authService.sendOtp(email);
@@ -64,13 +83,14 @@ public class AuthController {
 
 //    reset password
     @PostMapping("/reset")
-    public ResponseEntity<?> resetPassword(@RequestParam String email,
-                                           @RequestParam String otp,
-                                           @RequestParam String newPassword) {
-        boolean success = authService.resetPassword(email, otp, newPassword);
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid ForgotPassword request) {
+        System.out.println("controller data: " + request);
+        boolean success = authService.resetPassword(request);
         if (!success) return ResponseEntity.badRequest().body("OTP sai hoặc hết hạn");
         return ResponseEntity.ok("Đổi mật khẩu thành công");
     }
+
+
 
 
 }

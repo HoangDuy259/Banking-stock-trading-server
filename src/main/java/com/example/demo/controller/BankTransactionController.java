@@ -24,12 +24,20 @@ import java.util.UUID;
 public class BankTransactionController {
     IBankTransactionService bankTransactionService;
     @PostMapping("/transfer")
-    public ResponseEntity<?> transfer(@RequestBody @Valid BankTransactionRequest req){
+    public ResponseEntity<ApiResponse<BankTransactionResponse>> transfer(@RequestBody @Valid BankTransactionRequest req){
         try{
-            bankTransactionService.transferWithRetry(req.getFromAccountId(), req.getToAccountId(), req.getAmount());
-            return ResponseEntity.ok(Map.of("status", "OK"));
+            BankTransactionResponse transfer = bankTransactionService.transferWithRetry(req.getFromAccountId(), req.getToAccountId(), req.getAmount(), req.getDescription());
+            ApiResponse<BankTransactionResponse> res = ApiResponse.<BankTransactionResponse>builder()
+                    .message("Giao dịch thành công")
+                    .result(transfer)
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(res);
         }catch(InsufficientBalanceException ex){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+            ApiResponse<BankTransactionResponse> res = ApiResponse.<BankTransactionResponse>builder()
+                    .message(ex.getMessage())
+                    .result(null)
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
     }
 

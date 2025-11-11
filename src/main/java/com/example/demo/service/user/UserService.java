@@ -11,6 +11,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 import java.util.List;
 
@@ -21,6 +23,9 @@ import java.util.List;
 public class UserService implements IUserService {
     UserMapper userMapper;
     UserContextUtils userContextUtils;
+    UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
+
 
     @Override
     public UserResponse getMyInfo() {
@@ -47,6 +52,16 @@ public class UserService implements IUserService {
     @Override
     public boolean isUserEnabled(String username) {
         return false;
+    }
+
+    @Override
+    public boolean changePassword(String password, String email) {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+        return true;
     }
 
 }

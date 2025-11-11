@@ -12,4 +12,7 @@ public interface IBankAccountService{
     BankAccountResponse lockAccount(UUID accId);
     BankAccountResponse unlockAccount(UUID accId);
     BankAccountResponse findAccountByAccountNumber(String accNum);
+    List<String> suggestAccountNumbers(String prefix, int count);
+    List<String> searchSimilarAccountNumbers(String input);
+    BankAccount createCustomAccount(String username, String desiredNumber);
 };

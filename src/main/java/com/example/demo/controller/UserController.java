@@ -1,8 +1,10 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.request.users.ChangePasswordRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.user.UserResponse;
 import com.example.demo.service.user.IUserService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -64,6 +66,14 @@ public class UserController {
                     .body(new ApiResponse<>(e.getMessage(), null));
         }
 
+    }
+
+    //    change password
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
+        boolean success = userService.changePassword(request.getPassword(), request.getEmail());
+        if (!success) return ResponseEntity.badRequest().body("Không thể đổi password");
+        return ResponseEntity.ok("Đổi mật khẩu thành công");
     }
 
 }

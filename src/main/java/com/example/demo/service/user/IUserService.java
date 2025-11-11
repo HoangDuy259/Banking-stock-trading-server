@@ -14,4 +14,5 @@ public interface IUserService {
     Boolean deleteUser(Long userId);
 //    Boolean resetPassword(ResetPasswordRequest newPassword);
     boolean isUserEnabled(String username);
+    boolean changePassword(String password, String email);
 }

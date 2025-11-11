@@ -19,6 +19,8 @@ spring:
     properties.hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
+#      jdbc:
+#        time_zone: "Asia/Ho_Chi_Minh"
     show-sql: true
     hibernate:
       ddl-auto: update   # hoặc validate, tuỳ nhu cầu
@@ -67,8 +69,11 @@ spring:
 idp:
   url: http://localhost:9091
   client-id: superapp
-  client-secret: 4ya7QMc8Y5zW54x5J8Pxk4FXWvyIee99
+  client-secret: jdyTm5fi4FBaViekTgWMN0nfBNlPeeSc
 keycloak:
   realm: SuperApp
   admin-username: admin
   admin-password: admin123
+logging:
+  level:
+    org.apache.kafka: ERROR

@@ -5,6 +5,7 @@ import com.example.demo.utils.enums.AccountStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -13,5 +14,6 @@ public class BankAccountResponse {
     String accountNumber;
     BigDecimal balance;
     AccountStatus status;
+    LocalDateTime createdDate;
     UserResponse user;
 }

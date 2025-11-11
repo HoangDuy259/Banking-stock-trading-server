@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IBankTransactionService {
-    void transferWithRetry(UUID fromId, UUID toId, BigDecimal amount);
+    BankTransactionResponse transferWithRetry(UUID fromId, UUID toId, BigDecimal amount, String description);
     void transfer(BankAccount fromId, BankAccount toId, BigDecimal amount);
     List<BankTransactionResponse> findByAccountId(UUID accId);
 

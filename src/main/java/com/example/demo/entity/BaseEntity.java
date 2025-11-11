@@ -19,11 +19,11 @@ import java.time.LocalDateTime;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract class BaseEntity {
-    @Column(name = "created_date")
+    @Column(name = "created_date", nullable = false, updatable = false)
     @CreatedDate
     LocalDateTime createdDate;
 
-    @Column(name = "updated_date")
+    @Column(name = "updated_date", updatable = false)
     @LastModifiedDate
     LocalDateTime updatedDate;
 }

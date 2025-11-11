@@ -3,12 +3,14 @@ package com.example.demo.service.bank_transaction;
 import com.example.demo.dto.response.bank.BankTransactionResponse;
 import com.example.demo.entity.bank.BankAccount;
 import com.example.demo.entity.bank.Transaction;
+import com.example.demo.exception.AccountStatusException;
 import com.example.demo.exception.ExistsException;
 import com.example.demo.exception.InsufficientBalanceException;
 import com.example.demo.exception.TransactionFailedException;
 import com.example.demo.mapper.BankTransactionMapper;
 import com.example.demo.repository.BankAccountRepository;
 import com.example.demo.repository.BankTransactionRepository;
+import com.example.demo.utils.enums.AccountStatus;
 import com.example.demo.utils.enums.TransactionStatus;
 import com.example.demo.utils.enums.TransactionTypes;
 import com.example.demo.utils.transaction.TransactionUtils;
@@ -42,9 +44,17 @@ public class BankTransactionService implements IBankTransactionService {
 
     @Override
     public void transfer(BankAccount fromAcc, BankAccount toAcc, BigDecimal amount){
-        if(fromAcc.getId().equals(toAcc.getId())) throw new IllegalArgumentException("From and To cannot be same");
+        if (fromAcc.getId().equals(toAcc.getId())) {
+            throw new IllegalArgumentException("Tài khoản gửi và nhận không thể trùng nhau");
+        }
 
-        if(fromAcc.getBalance().compareTo(amount) < 0) throw new InsufficientBalanceException("Not enough balance");
+        if (!fromAcc.getStatus().equals(AccountStatus.ACTIVE) || !toAcc.getStatus().equals(AccountStatus.ACTIVE)) {
+            throw new AccountStatusException("Một trong hai tài khoản đang bị khóa hoặc không hợp lệ");
+        }
+
+        if (fromAcc.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientBalanceException("Số dư không đủ để thực hiện giao dịch");
+        }
 
         fromAcc.setBalance(fromAcc.getBalance().subtract(amount));
         toAcc.setBalance(toAcc.getBalance().add(amount));
@@ -55,15 +65,14 @@ public class BankTransactionService implements IBankTransactionService {
     }
 
     @Override
-    public void transferWithRetry(UUID fromId, UUID toId, BigDecimal amount){
+    public BankTransactionResponse transferWithRetry(UUID fromId, UUID toId, BigDecimal amount, String description){
 
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
         transaction.setTransactionType(TransactionTypes.TRANSFER);
         transaction.setStatus(TransactionStatus.START);
         transaction.setCreatedDate(LocalDateTime.now());
-        String description = (transaction.getDescription() != null && transaction.getDescription().isEmpty()) ? transaction.getDescription() : "CHUYEN KHOAN";
-        transaction.setDescription(description);
+        transaction.setDescription(description != null && !description.trim().isEmpty() ? description : "CHUYEN KHOAN");
         int attempt = 0;
         while(true){
             attempt++;
@@ -89,60 +98,24 @@ public class BankTransactionService implements IBankTransactionService {
                     bankTransactionRepository.save(transaction);
                     return null;
                 });
-
                 break;
-            }catch(DataAccessException dae){
+            } catch(DataAccessException dae){
                 if(transactionUtils.isRetryable(dae) && attempt < transactionUtils.getMAX_RETRY()){
                     transactionUtils.backoff(attempt);
                     continue;
                 }else{
-                    Transaction failedTx = new Transaction();
-                    failedTx.setSourceAccount(transaction.getSourceAccount());
-                    failedTx.setDestinationAccount(transaction.getDestinationAccount());
-                    failedTx.setAmount(transaction.getAmount());
-                    failedTx.setTransactionType(transaction.getTransactionType());
-                    failedTx.setStatus(TransactionStatus.FAILED);
-                    failedTx.setCreatedDate(transaction.getCreatedDate());
-                    bankTransactionRepository.save(failedTx);
+                    handleFailedTransaction(transaction, "Transfer failed after attempts: " + attempt + " - " + dae.getMessage());
                     throw new TransactionFailedException("Transfer failed after attempts: " + attempt, dae);
                 }
-            }catch(InsufficientBalanceException ibe){
-                try{
-                    transactionTemplate.execute(status -> {
-                        Transaction failedTx = new Transaction();
-                        failedTx.setSourceAccount(transaction.getSourceAccount());
-                        failedTx.setDestinationAccount(transaction.getDestinationAccount());
-                        failedTx.setAmount(transaction.getAmount());
-                        failedTx.setTransactionType(transaction.getTransactionType());
-                        failedTx.setStatus(TransactionStatus.FAILED);
-                        failedTx.setCreatedDate(transaction.getCreatedDate());
-                        bankTransactionRepository.save(failedTx);
-                        return null;
-                    });
-                }catch(Exception ex){
-                    System.err.println("Error from InsufficientBalanceException: " + ex.getMessage());
-                }
-                throw ibe;
-
+            } catch(InsufficientBalanceException | AccountStatusException ex){
+                handleFailedTransaction(transaction, ex.getMessage());
+                throw ex;
             } catch (Exception ex){
-                try {
-                    transactionTemplate.execute(status -> {
-                        Transaction failedTx = new Transaction();
-                        failedTx.setSourceAccount(transaction.getSourceAccount());
-                        failedTx.setDestinationAccount(transaction.getDestinationAccount());
-                        failedTx.setAmount(transaction.getAmount());
-                        failedTx.setTransactionType(transaction.getTransactionType());
-                        failedTx.setStatus(TransactionStatus.FAILED);
-                        failedTx.setCreatedDate(transaction.getCreatedDate());
-                        bankTransactionRepository.save(failedTx);
-                        return null;
-                    });
-                } catch (Exception e) {
-                    System.err.println("Error from exception: " + e.getMessage());
-                }
-                throw new TransactionFailedException("Unexpected error", ex);
+                handleFailedTransaction(transaction, "Unexpected error");
+                throw new TransactionFailedException("Unexpected error during transfer", ex);
             }
         }
+        return bankTransactionMapper.toResponse(transaction);
     }
 
     @Override
@@ -159,4 +132,26 @@ public class BankTransactionService implements IBankTransactionService {
 
         return bankTransactionMapper.toListResponse(allTransactions);
     }
+
+    private void handleFailedTransaction(Transaction transaction, String message) {
+        try {
+            transactionTemplate.execute(status -> {
+                Transaction failedTx = new Transaction();
+                failedTx.setSourceAccount(transaction.getSourceAccount());
+                failedTx.setDestinationAccount(transaction.getDestinationAccount());
+                failedTx.setAmount(transaction.getAmount());
+                failedTx.setTransactionType(transaction.getTransactionType());
+                failedTx.setStatus(TransactionStatus.FAILED);
+                failedTx.setDescription((transaction.getDescription() != null ? transaction.getDescription() + " | " : "")
+                        + "FAILED: " + message);
+                failedTx.setCreatedDate(transaction.getCreatedDate());
+                bankTransactionRepository.save(failedTx);
+                return null;
+            });
+        } catch (Exception e) {
+            System.err.println("Error when saving failed transaction: " + e.getMessage());
+        }
+    }
 }
+
+
